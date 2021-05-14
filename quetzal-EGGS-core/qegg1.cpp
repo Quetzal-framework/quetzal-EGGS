@@ -1,10 +1,5 @@
 //
-//  Copyright © 2018 Arnaud Becheler. All rights reserved.
-//
-//
-// g++ main.cpp -o main -I/usr/include/gdal -lgdal -I/home/becheler/dev -std=c++17 -I/home/becheler/dev -lboost_program_options -lsqlite3
-//
-//
+//  Copyright © 2020 Arnaud Becheler. All rights reserved.
 //
 #include "qegg1.h"
 

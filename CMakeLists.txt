@@ -25,6 +25,8 @@ set(Boost_MINIMUM_REQUIRED 1.61)
 add_subdirectory(external)
 
 include(ExternalProject)
+include(CTest)
+
 ExternalProject_Add(
   ${PROJECT_NAME}_core
   DEPENDS
@@ -49,6 +51,7 @@ ExternalProject_Add(
     -DCMAKE_LIBRARY_PATH:PATH=${GDAL_LIBRARY}
   BUILD_ALWAYS
     1
+  TEST_BEFORE_INSTALL 1
   )
 
   INSTALL(DIRECTORY ${CMAKE_BINARY_DIR}/stage/bin DESTINATION ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME})

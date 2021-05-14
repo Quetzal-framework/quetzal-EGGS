@@ -140,6 +140,27 @@ public:
     return this->m_database.last_insert_rowid();
   }
 
+  auto insert_params_failure_and_get_rowid(bpo::variables_map vm)
+  {
+    sqlite3pp::command cmd(
+      this->m_database,
+      "INSERT INTO core4_pods (lon_0, lat_0, N_0, duration, K_suit, K_max, K_min, p_K, r, emigrant_rate, newicks) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+    );
+    cmd.binder() << vm["lon_0"].as<double>()
+                  << vm["lat_0"].as<double>()
+                  << vm["N_0"].as<int>()
+                  << vm["duration"].as<int>()
+                  << vm["K_suit"].as<int>()
+                  << vm["K_max"].as<int>()
+                  << vm["K_min"].as<int>()
+                  << vm["p_K"].as<double>()
+                  << vm["r"].as<double>()
+                  << vm["emigrant_rate"].as<double>()
+                  << "";
+    cmd.execute();
+    return this->m_database.last_insert_rowid();
+  }
+
 private:
   sqlite3pp::database m_database;
 
@@ -178,8 +199,12 @@ public:
     maybe_save_demography();
     int nb_reuse = m_vm["reuse"].as<int>();
     for(int i=1; i <= nb_reuse; ++i){
-      simulate_coalescence(gen);
-      save_genealogies();
+      try{
+        simulate_coalescence(gen);
+        record_params_and_genealogies();
+      }catch(const std::domain_error &){
+        record_params_and_failure();
+      }
     }
   }
 
@@ -378,10 +403,16 @@ private:
     m_newicks = genealogies;
   }
 
-  void save_genealogies()
+  void record_params_and_genealogies()
   {
     auto ID = m_database.insert_params_results_and_get_rowid(m_vm, m_newicks);
-    std::cout << ID << std::endl;
+    std::cout << ID << "\tRECORDED" <<std::endl;
+  }
+
+  void record_params_and_failure()
+  {
+    auto ID = m_database.insert_params_failure_and_get_rowid(m_vm);
+    std::cerr << ID << "\tFAILED" <<std::endl;
   }
 };
 
