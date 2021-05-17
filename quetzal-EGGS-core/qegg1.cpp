@@ -3,18 +3,36 @@
 //
 #include "qegg1.h"
 
+namespace
+{
+  const size_t ERROR_IN_COMMAND_LINE = 1;
+  const size_t SUCCESS = 0;
+  const size_t ERROR_UNHANDLED_EXCEPTION = 2;
+
+}
+
 int main(int argc, char* argv[])
 {
   bool verbose = false;
   auto vm = handle_options(argc, argv);
-  if (vm.count("help")) {
-      return 1;
+
+  // --help option
+  if (vm.count("help"))
+  {
+    std::cout << "This is Quetzal-EGG 1 simulator" << std::endl;
+    std::cout << "Generates Newick gene trees in heterogeneous landscape." << std::endl;
+    std::cout << "Author: Arnaud Becheler, 2020." << std::endl;
+    PrintVariableMap(vm);
+    return SUCCESS;
   }
+
+  // --verbose option
   if (vm.count("v"))
   {
     verbose = true;
     PrintVariableMap(vm);
   }
+
   std::random_device rd;
   std::mt19937 gen(rd());
   if(verbose){std::cout << "Initialization" << std::endl;}

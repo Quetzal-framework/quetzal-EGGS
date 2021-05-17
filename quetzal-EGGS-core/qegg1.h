@@ -41,6 +41,7 @@ namespace expr = quetzal::expressive;
 namespace bpo = boost::program_options;
 
 
+
 // Returns a map with the program options
 auto handle_options(int argc, char* argv[])
 {
@@ -50,57 +51,43 @@ auto handle_options(int argc, char* argv[])
     bpo::options_description generalOptions{"General"};
     generalOptions.add_options()
     ("help,h", "Help screen")
-    ("v", "verbose mode")
-    ("config", bpo::value<std::string>()->required(), "Config file")
-    ("landscape", bpo::value<std::string>()->required(), "Geospatial file in tiff format giving the friction map")
-    ("reuse", bpo::value<int>()->required(), "How many times pseudo-observed should be generated under the same spatial history")
-    ("n_loci", bpo::value<int>()->required(), "Number of loci to simulate")
-    ("sample",  bpo::value<std::string>()->required(), "File name for the lon/lat of sampled genetic material")
-    ("lon_0", bpo::value<double>()->required(), "Introduction point longitude")
-    ("lat_0", bpo::value<double>()->required(), "Introduction point latitude")
-    ("N_0", bpo::value<int>()->required(), "Number of gene copies at introduction point")
-    ("duration", bpo::value<int>()->required(), "Number of generations to simulate")
-    ("K_suit", bpo::value<int>()->required(), "Carrying capacity in suitable areas")
-    ("K_max", bpo::value<int>()->required(), "Highest carrying capacity in areas with null suitability")
-    ("K_min", bpo::value<int>()->required(), "Lowest carrying capacity in areas with null suitability")
-    ("p_K", bpo::value<double>()->required(), "Probability to have highest carrying capacity in areas with 0 suitability")
-    ("r", bpo::value<double>()->required(), "Growth rate")
-    ("emigrant_rate", bpo::value<double>()->required(), "Emigrant rate between the four neighboring cells")
-    ("demography_out",  bpo::value<std::string>(), "File name for the simulated demography output")
-    ("database", bpo::value<std::string>()->required(), "Filename database storing the output");
+    ("verbose,v", "verbose mode")
+    ("config,a", bpo::value<std::string>(), "Config file")
+    ("landscape,l", bpo::value<std::string>(), "Geospatial file in tiff format giving the friction map")
+    ("demography_out,d",  bpo::value<std::string>(), "File name for the simulated demography output")
+    ("database,o", bpo::value<std::string>(), "Filename database storing the output");
 
-    bpo::options_description fileOptions{"File"};
-    fileOptions.add_options()
-    ("landscape", bpo::value<std::string>()->required(), "Geospatial file in tiff format giving the friction map")
-    ("reuse", bpo::value<int>()->required(), "How many times pseudo-observed should be generated under the same spatial history")
-    ("n_loci", bpo::value<int>()->required(), "Number of loci to simulate")
-    ("sample",  bpo::value<std::string>()->required(), "File name for the lon/lat of sampled genetic material")
-    ("lon_0", bpo::value<double>()->required(), "Introduction point longitude")
-    ("lat_0", bpo::value<double>()->required(), "Introduction point latitude")
-    ("N_0", bpo::value<int>()->required(), "Number of gene copies at introduction point")
-    ("duration", bpo::value<int>()->required(), "Number of generations to simulate")
-    ("K_suit", bpo::value<int>()->required(), "Carrying capacity in suitable areas")
-    ("K_max", bpo::value<int>()->required(), "Highest carrying capacity in areas with null suitability")
-    ("K_min", bpo::value<int>()->required(), "Lowest carrying capacity in areas with null suitability")
-    ("p_K", bpo::value<double>()->required(), "Probability to have highest carrying capacity in areas with 0 suitability")
-    ("r", bpo::value<double>()->required(), "Growth rate")
-    ("emigrant_rate", bpo::value<double>()->required(), "Emigrant rate between the four neighboring cells")
-    ("demography_out",  bpo::value<std::string>(), "File name for the simulated demography output")
-    ("database", bpo::value<std::string>()->required(), "Filename database storing the output");
+    // bpo::options_description fileOptions{"File"};
+    // fileOptions.add_options()
+    // ("landscape", bpo::value<std::string>()->required(), "Geospatial file in tiff format giving the friction map")
+    // ("reuse", bpo::value<int>()->required(), "How many times pseudo-observed should be generated under the same spatial history")
+    // ("n_loci", bpo::value<int>()->required(), "Number of loci to simulate")
+    // ("sample",  bpo::value<std::string>()->required(), "File name for the lon/lat of sampled genetic material")
+    // ("lon_0", bpo::value<double>()->required(), "Introduction point longitude")
+    // ("lat_0", bpo::value<double>()->required(), "Introduction point latitude")
+    // ("N_0", bpo::value<int>()->required(), "Number of gene copies at introduction point")
+    // ("duration", bpo::value<int>()->required(), "Number of generations to simulate")
+    // ("K_suit", bpo::value<int>()->required(), "Carrying capacity in suitable areas")
+    // ("K_max", bpo::value<int>()->required(), "Highest carrying capacity in areas with null suitability")
+    // ("K_min", bpo::value<int>()->required(), "Lowest carrying capacity in areas with null suitability")
+    // ("p_K", bpo::value<double>()->required(), "Probability to have highest carrying capacity in areas with 0 suitability")
+    // ("r", bpo::value<double>()->required(), "Growth rate")
+    // ("emigrant_rate", bpo::value<double>()->required(), "Emigrant rate between the four neighboring cells")
+    // ("demography_out",  bpo::value<std::string>(), "File name for the simulated demography output")
+    // ("database", bpo::value<std::string>()->required(), "Filename database storing the output");
 
     store(parse_command_line(argc, argv, generalOptions), vm);
-    if (vm.count("config"))
-    {
-      std::ifstream ifs{vm["config"].as<std::string>().c_str()};
-      if (ifs){
-        store(parse_config_file(ifs, fileOptions), vm);
-      }
-    }
+
     notify(vm);
-    if (vm.count("help"))
-    {
-      std::cout << generalOptions << '\n';
-    }
+
+  //   if (vm.count("config"))
+  //   {
+  //     std::ifstream ifs{vm["config"].as<std::string>().c_str()};
+  //     if (ifs){
+  //       store(parse_config_file(ifs, fileOptions), vm);
+  //     }
+  //   }
+  //   notify(vm);
   }
   catch (const bpo::error &ex)
   {
