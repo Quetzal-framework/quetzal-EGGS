@@ -22,6 +22,9 @@ include_directories(quetzal/include)
 add_executable(qegg1 qegg1.cpp)
 target_link_libraries(qegg1 LINK_PUBLIC ${SQLite3_LIBRARIES} GDAL::GDAL ${Boost_LIBRARIES})
 
+enable_testing()
+add_subdirectory(test)
+
 install(
   TARGETS
     qegg1

@@ -10,3 +10,8 @@ cd Release
 cmake ..
 cmake --build . --config Release
 ```
+
+# Tests output
+```
+CTEST_OUTPUT_ON_FAILURE=TRUE cmake --build .
+```

@@ -1,25 +1,51 @@
 //
-//  Copyright © 2018 Arnaud Becheler. All rights reserved.
-//
-//
-// g++ main.cpp -o main -I/usr/include/gdal -lgdal -I/home/becheler/dev -std=c++17 -I/home/becheler/dev -lboost_program_options -lsqlite3
-//
-//
+//  Copyright © 2020 Arnaud Becheler. All rights reserved.
 //
 #include "qegg1.h"
+#include <boost/program_options.hpp>
+
+namespace bpo = boost::program_options;
+
+namespace
+{
+  const size_t ERROR_IN_COMMAND_LINE = 1;
+  const size_t SUCCESS = 0;
+  const size_t ERROR_UNHANDLED_EXCEPTION = 2;
+}
 
 int main(int argc, char* argv[])
 {
+  bpo::variables_map vm;
   bool verbose = false;
-  auto vm = handle_options(argc, argv);
-  if (vm.count("help")) {
-      return 1;
+  try{
+    vm = handle_options(argc, argv);
+    // --help option
+    if (vm.count("help") || vm.count("version") )
+    {
+      return SUCCESS;
+    }
   }
-  if (vm.count("v"))
+  catch(boost::program_options::required_option& e)
+  {
+    std::cerr << "ERROR: " << e.what() << std::endl << std::endl;
+    return ERROR_IN_COMMAND_LINE;
+  }
+  catch(boost::program_options::error& e)
+  {
+    std::cerr << "ERROR: " << e.what() << std::endl << std::endl;
+    return ERROR_IN_COMMAND_LINE;
+  }
+
+  // should do the following without fear because everything is required to be present
+
+  // --verbose option
+  if (vm.count("verbose"))
   {
     verbose = true;
     PrintVariableMap(vm);
   }
+  PrintVariableMap(vm);
+
   std::random_device rd;
   std::mt19937 gen(rd());
   if(verbose){std::cout << "Initialization" << std::endl;}
