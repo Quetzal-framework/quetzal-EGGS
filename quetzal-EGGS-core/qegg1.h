@@ -43,39 +43,40 @@ namespace bpo = boost::program_options;
 auto handle_options(int argc, char* argv[])
 {
   // Declare a group of options that will be allowed only on command line
-  bpo::options_description command_line_options{"Command line options"};
-  command_line_options.add_options()
+  bpo::options_description generic_options{"Command line options"};
+  generic_options.add_options()
   ("help,h", "help screen")
-  ("verbose", "verbose mode")
-  ("config", bpo::value<std::string>(), "configuration file")
+  ("verbose,v", "verbose mode")
+  ("version", "software version")
+  ("config", bpo::value<std::string>()->required(), "configuration file")
   ;
   // Allowed both on command line and in config file
   bpo::options_description general_options{"General options"};
   general_options.add_options()
-  ("friction", bpo::value<std::string>(), "input friction map in GeoTiFF (.tiff) format")
-  ("tips",  bpo::value<std::string>(), "input CSV file listing <ID,latitude,longitude> for every node")
+  ("suitability", bpo::value<std::string>()->required(), "input suitability map in GeoTiFF (.tiff) format")
+  ("tips",  bpo::value<std::string>()->required(), "input CSV file listing <ID,latitude,longitude> for every node")
   ("output", bpo::value<std::string>()->default_value("out.db"), "SQLite 3 database output")
   ;
   // Declare a simpler way to call on command line
-  // bpo::positional_options_description positional_options;
-  // positional_options.add("config", 1);
-  // positional_options.add("friction", 1);
-  // positional_options.add("tips", 1);
-  // positional_options.add("output", 1);
+  bpo::positional_options_description positional_options;
+  positional_options.add("config", 1);
+  positional_options.add("suitability", 1);
+  positional_options.add("tips", 1);
+  positional_options.add("output", 1);
   // Allowed both on command line and in config file
-  bpo::options_description parameters_options{"Demogenetic parameters"};
-  parameters_options.add_options()
-  ("n_loci", bpo::value<int>()->required(), "number of loci")
-  ("lon_0", bpo::value<double>()->required(), "Origin point longitude")
-  ("lat_0", bpo::value<double>()->required(), "Origin point latitude")
-  ("N_0", bpo::value<int>()->required(), "Number of gene copies at introduction point")
-  ("duration", bpo::value<int>()->required(), "Number of generations to simulate")
-  ("K_suit", bpo::value<int>()->required(), "Carrying capacity in suitable areas")
-  ("K_max", bpo::value<int>()->required(), "Highest carrying capacity in areas with null suitability")
-  ("K_min", bpo::value<int>()->required(), "Lowest carrying capacity in areas with null suitability")
-  ("p_K", bpo::value<double>()->required(), "Probability to have highest carrying capacity in areas with 0 suitability")
-  ("r", bpo::value<double>()->required(), "Growth rate")
-  ("emigrant_rate", bpo::value<double>()->required(), "Emigrant rate between the four neighboring cells")
+  bpo::options_description model_options{"Demogenetic parameters"};
+  model_options.add_options()
+  ("n_loci", bpo::value<int>(), "number of loci")
+  ("lon_0", bpo::value<double>(), "Origin point longitude")
+  ("lat_0", bpo::value<double>(), "Origin point latitude")
+  ("N_0", bpo::value<int>(), "Number of gene copies at introduction point")
+  ("duration", bpo::value<int>(), "Number of generations to simulate")
+  ("K_suit", bpo::value<int>(), "Carrying capacity in suitable areas")
+  ("K_max", bpo::value<int>(), "Highest carrying capacity in areas with null suitability")
+  ("K_min", bpo::value<int>(), "Lowest carrying capacity in areas with null suitability")
+  ("p_K", bpo::value<double>(), "Probability to have highest carrying capacity in areas with 0 suitability")
+  ("r", bpo::value<double>(), "Growth rate")
+  ("emigrant_rate", bpo::value<double>(), "Emigrant rate between the four neighboring cells")
   ;
   // Allowed both on command line and in config file
   bpo::options_description other_options{"Other options"};
@@ -83,26 +84,37 @@ auto handle_options(int argc, char* argv[])
   ("reuse", bpo::value<int>()->default_value(1), "number of pseudo-observed data to be simulated under one demographic history")
   ("log-history",  bpo::value<std::string>(), "output history in GeoTiff format if option specified")
   ;
+  bpo::options_description command_line_options{"Command line options"};
+  command_line_options.add(generic_options).add(general_options).add(model_options).add(other_options);
 
   bpo::options_description file_options{"File options"};
-  file_options.add(general_options).add(parameters_options).add(other_options);
+  file_options.add(general_options).add(model_options).add(other_options);
+
   bpo::variables_map vm;
   try
   {
-    po::store(po::parse_command_line(argc, argv, command_line_options), vm);
-
+    //bpo::store(po::parse_command_line(argc, argv, command_line_options), vm);
+    bpo::store(
+      bpo::command_line_parser(argc, argv).
+      options(command_line_options).
+      positional(positional_options).
+      run(), vm); // can throw
     // --help option
     if (vm.count("help"))
     {
       std::cout << "This is Quetzal-EGG-1 coalescence simulator." << std::endl;
       std::cout << "Purpose: simulate gene trees in an heterogeneous landscape." << std::endl;
       std::cout << "Author: Arnaud Becheler, 2021." << std::endl;
-      std::cout << "Usage: " << argv[0] << " [options] <config> <friction> <nodes> <output> ...\n";
+      std::cout << "Usage: " << argv[0] << " [options] <config> <suitability> <tips> <output> ...\n";
       std::cout << "\n" << command_line_options << std::endl;
-      std::cout << "\n" << general_options << std::endl;
-      std::cout << "\n" << parameters_options << std::endl;
-      std::cout << "\n" << other_options << std::endl;
       std::cout << "\n" << file_options << std::endl;
+      return vm;
+      // SUCCESS
+    }
+    // --version option
+    if (vm.count("version"))
+    {
+      std::cout << "quetzal-EGG-1 version 0.1" << std::endl;
       return vm;
       // SUCCESS
     }
@@ -117,17 +129,15 @@ auto handle_options(int argc, char* argv[])
     throw;
   }
 
+  if (vm.count("config"))
+  {
+    std::ifstream ifs{vm["config"].as<std::string>().c_str()};
+    if (ifs){
+      store(parse_config_file(ifs, file_options), vm);
+    }
+  }
 
-
-  // if (vm.count("config"))
-  // {
-  //   std::ifstream ifs{vm["config"].as<std::string>().c_str()};
-  //   if (ifs){
-  //     store(parse_config_file(ifs, file_options), vm);
-  //   }
-  // }
-  //
-  // notify(vm);
+  notify(vm);
   return vm;
 } // end of handle_options
 
@@ -266,7 +276,7 @@ private:
     if(verbose){std::cout << "Database initialization" << std::endl;}
     try
     {
-      std::string filename = m_vm["database"].as<std::string>();
+      std::string filename = m_vm["output"].as<std::string>();
       return database_type(filename);
     }
     catch(const std::exception& e)
@@ -278,7 +288,7 @@ private:
   // TODO: pas sûr de la syntaxe du try/catch
   landscape_type build_landscape()
   {
-    std::string filename = m_vm["landscape"].as<std::string>();
+    std::string filename = m_vm["suitability"].as<std::string>();
     if(verbose){std::cout << "Landscape initialization" << std::endl;}
     try
     {
@@ -293,8 +303,8 @@ private:
   // TODO haploid versus diploid. Plus, format changed: ID/coordinates/no genetics
   sample_type build_sample()
   {
-    if(verbose){std::cout << "Sample initialization" << std::endl;}
-    std::string datafile = m_vm["sample"].as<std::string>();
+    if(verbose){std::cout << "Tip nodes initialization" << std::endl;}
+    std::string datafile = m_vm["tips"].as<std::string>();
     using decrypt::utils::GeneCopy;
     rapidcsv::Document doc(datafile);
     std::vector<std::string> IDs = doc.GetColumn<std::string>("ID");
@@ -394,9 +404,9 @@ private:
 
   void maybe_save_demography()
   {
-    if(m_vm.count("demography_out"))
+    if(m_vm.count("log-history"))
     {
-      std::string filename = m_vm["demography_out"].as<std::string>();
+      std::string filename = m_vm["log-history"].as<std::string>();
       if(std::filesystem::exists(filename))
       {
         std::string message("Unable to save demography: file " +filename+ " already exists.");
