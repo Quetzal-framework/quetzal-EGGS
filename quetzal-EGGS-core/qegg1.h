@@ -31,7 +31,6 @@
 #include <iostream>
 #include <filesystem>
 #include <functional>
-
 namespace coal = quetzal::coalescence;
 namespace geo = quetzal::geography;
 namespace demography = quetzal::demography;
@@ -40,59 +39,95 @@ namespace sim = quetzal::simulator;
 namespace expr = quetzal::expressive;
 namespace bpo = boost::program_options;
 
-
-
 // Returns a map with the program options
 auto handle_options(int argc, char* argv[])
 {
+  // Declare a group of options that will be allowed only on command line
+  bpo::options_description command_line_options{"Command line options"};
+  command_line_options.add_options()
+  ("help,h", "help screen")
+  ("verbose", "verbose mode")
+  ("config", bpo::value<std::string>(), "configuration file")
+  ;
+  // Allowed both on command line and in config file
+  bpo::options_description general_options{"General options"};
+  general_options.add_options()
+  ("friction", bpo::value<std::string>(), "input friction map in GeoTiFF (.tiff) format")
+  ("tips",  bpo::value<std::string>(), "input CSV file listing <ID,latitude,longitude> for every node")
+  ("output", bpo::value<std::string>()->default_value("out.db"), "SQLite 3 database output")
+  ;
+  // Declare a simpler way to call on command line
+  // bpo::positional_options_description positional_options;
+  // positional_options.add("config", 1);
+  // positional_options.add("friction", 1);
+  // positional_options.add("tips", 1);
+  // positional_options.add("output", 1);
+  // Allowed both on command line and in config file
+  bpo::options_description parameters_options{"Demogenetic parameters"};
+  parameters_options.add_options()
+  ("n_loci", bpo::value<int>()->required(), "number of loci")
+  ("lon_0", bpo::value<double>()->required(), "Origin point longitude")
+  ("lat_0", bpo::value<double>()->required(), "Origin point latitude")
+  ("N_0", bpo::value<int>()->required(), "Number of gene copies at introduction point")
+  ("duration", bpo::value<int>()->required(), "Number of generations to simulate")
+  ("K_suit", bpo::value<int>()->required(), "Carrying capacity in suitable areas")
+  ("K_max", bpo::value<int>()->required(), "Highest carrying capacity in areas with null suitability")
+  ("K_min", bpo::value<int>()->required(), "Lowest carrying capacity in areas with null suitability")
+  ("p_K", bpo::value<double>()->required(), "Probability to have highest carrying capacity in areas with 0 suitability")
+  ("r", bpo::value<double>()->required(), "Growth rate")
+  ("emigrant_rate", bpo::value<double>()->required(), "Emigrant rate between the four neighboring cells")
+  ;
+  // Allowed both on command line and in config file
+  bpo::options_description other_options{"Other options"};
+  other_options.add_options()
+  ("reuse", bpo::value<int>()->default_value(1), "number of pseudo-observed data to be simulated under one demographic history")
+  ("log-history",  bpo::value<std::string>(), "output history in GeoTiff format if option specified")
+  ;
+
+  bpo::options_description file_options{"File options"};
+  file_options.add(general_options).add(parameters_options).add(other_options);
   bpo::variables_map vm;
   try
   {
-    bpo::options_description generalOptions{"General"};
-    generalOptions.add_options()
-    ("help,h", "Help screen")
-    ("verbose,v", "verbose mode")
-    ("config,a", bpo::value<std::string>(), "Config file")
-    ("landscape,l", bpo::value<std::string>(), "Geospatial file in tiff format giving the friction map")
-    ("demography_out,d",  bpo::value<std::string>(), "File name for the simulated demography output")
-    ("database,o", bpo::value<std::string>(), "Filename database storing the output");
+    po::store(po::parse_command_line(argc, argv, command_line_options), vm);
 
-    // bpo::options_description fileOptions{"File"};
-    // fileOptions.add_options()
-    // ("landscape", bpo::value<std::string>()->required(), "Geospatial file in tiff format giving the friction map")
-    // ("reuse", bpo::value<int>()->required(), "How many times pseudo-observed should be generated under the same spatial history")
-    // ("n_loci", bpo::value<int>()->required(), "Number of loci to simulate")
-    // ("sample",  bpo::value<std::string>()->required(), "File name for the lon/lat of sampled genetic material")
-    // ("lon_0", bpo::value<double>()->required(), "Introduction point longitude")
-    // ("lat_0", bpo::value<double>()->required(), "Introduction point latitude")
-    // ("N_0", bpo::value<int>()->required(), "Number of gene copies at introduction point")
-    // ("duration", bpo::value<int>()->required(), "Number of generations to simulate")
-    // ("K_suit", bpo::value<int>()->required(), "Carrying capacity in suitable areas")
-    // ("K_max", bpo::value<int>()->required(), "Highest carrying capacity in areas with null suitability")
-    // ("K_min", bpo::value<int>()->required(), "Lowest carrying capacity in areas with null suitability")
-    // ("p_K", bpo::value<double>()->required(), "Probability to have highest carrying capacity in areas with 0 suitability")
-    // ("r", bpo::value<double>()->required(), "Growth rate")
-    // ("emigrant_rate", bpo::value<double>()->required(), "Emigrant rate between the four neighboring cells")
-    // ("demography_out",  bpo::value<std::string>(), "File name for the simulated demography output")
-    // ("database", bpo::value<std::string>()->required(), "Filename database storing the output");
-
-    store(parse_command_line(argc, argv, generalOptions), vm);
-
-    notify(vm);
-
-  //   if (vm.count("config"))
-  //   {
-  //     std::ifstream ifs{vm["config"].as<std::string>().c_str()};
-  //     if (ifs){
-  //       store(parse_config_file(ifs, fileOptions), vm);
-  //     }
-  //   }
-  //   notify(vm);
+    // --help option
+    if (vm.count("help"))
+    {
+      std::cout << "This is Quetzal-EGG-1 coalescence simulator." << std::endl;
+      std::cout << "Purpose: simulate gene trees in an heterogeneous landscape." << std::endl;
+      std::cout << "Author: Arnaud Becheler, 2021." << std::endl;
+      std::cout << "Usage: " << argv[0] << " [options] <config> <friction> <nodes> <output> ...\n";
+      std::cout << "\n" << command_line_options << std::endl;
+      std::cout << "\n" << general_options << std::endl;
+      std::cout << "\n" << parameters_options << std::endl;
+      std::cout << "\n" << other_options << std::endl;
+      std::cout << "\n" << file_options << std::endl;
+      return vm;
+      // SUCCESS
+    }
+    bpo::notify(vm); // throws on error, so do after help in case there are any problems
   }
-  catch (const bpo::error &ex)
+  catch(boost::program_options::required_option& e)
   {
-    std::cerr << ex.what() << '\n';
+    throw;
   }
+  catch(boost::program_options::error& e)
+  {
+    throw;
+  }
+
+
+
+  // if (vm.count("config"))
+  // {
+  //   std::ifstream ifs{vm["config"].as<std::string>().c_str()};
+  //   if (ifs){
+  //     store(parse_config_file(ifs, file_options), vm);
+  //   }
+  // }
+  //
+  // notify(vm);
   return vm;
 } // end of handle_options
 
