@@ -2,6 +2,8 @@
 
 Suit of coalescence-based simulation programs for spatial population genetics.
 
+Website: https://becheler.github.io/pages/quetzal_eggs/home
+
 ## Description
 
 A demographic history is simulated forward in time in a heterogeneous landscape
