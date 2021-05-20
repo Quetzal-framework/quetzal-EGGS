@@ -45,15 +45,14 @@ to download and install Git.
 
 Check it has been properly installed with ```git --version```.
 
-#### cmake
+#### CMake
 
 CMake is used as an open-source, cross-platform toolbox we use to build, test, and package the software.
 Check if it is installed by typing ```cmake --version``` in a terminal.
 If it is not installed, please visit the [installation pages](https://vitux.com/how-to-install-cmake-on-ubuntu/).
 
-#### g++
+#### C++ compiler
 
-The C++ code
 gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0
 
 ####  Boost
