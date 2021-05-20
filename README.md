@@ -7,6 +7,9 @@ Suit of coalescence-based simulation programs for spatial population genetics.
 A demographic history is simulated forward in time in a heterogeneous landscape
 (the landscape patterns are given to the program options as a geographic raster layer).
 
+The exact demogaphic model is different for each quetzal-EGG, and their parametrization
+are different.
+
 At sampling time, the demographic process is stopped and tip nodes
 (equivalently: the gene copies sampled across the landscape) coordinates are
 read by the program from a CSV file.
