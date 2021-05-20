@@ -39,7 +39,6 @@ that can be installed via APT. Enter ```sudo apt install git``` in a terminal
 to download and install Git.
 
 Check it has been properly installed with ```git --version```.
-#### cmake
 
 #### cmake
 
@@ -62,6 +61,10 @@ The Geospatial Data Abstraction Library (GDAL) is essential to represent a spati
 To install GDAL please visit: http://www.gdal.org/
 
 ### Build
+
+When all dependencies are met, you can simply build the project by running the
+following commands in a terminal:
+
 ```
 git clone --recurse-submodules https://github.com/Becheler/quetzal-EGGS
 cd quetzal-EGGS
