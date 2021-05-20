@@ -43,7 +43,7 @@ namespace bpo = boost::program_options;
 auto handle_options(int argc, char* argv[])
 {
   // Declare a group of options that will be allowed only on command line
-  bpo::options_description generic_options{"Command line options"};
+  bpo::options_description generic_options{"Command-line-only options"};
   generic_options.add_options()
   ("help,h", "help screen")
   ("verbose,v", "verbose mode")
@@ -51,7 +51,7 @@ auto handle_options(int argc, char* argv[])
   ("config", bpo::value<std::string>()->required(), "configuration file")
   ;
   // Allowed both on command line and in config file
-  bpo::options_description general_options{"General options"};
+  bpo::options_description general_options{"Input/output options"};
   general_options.add_options()
   ("suitability", bpo::value<std::string>()->required(), "input suitability map in GeoTiFF (.tiff) format")
   ("tips",  bpo::value<std::string>()->required(), "input CSV file listing <ID,latitude,longitude> for every node")
@@ -64,7 +64,7 @@ auto handle_options(int argc, char* argv[])
   positional_options.add("tips", 1);
   positional_options.add("output", 1);
   // Allowed both on command line and in config file
-  bpo::options_description model_options{"Demogenetic parameters"};
+  bpo::options_description model_options{"Demogenetic model parameters"};
   model_options.add_options()
   ("n_loci", bpo::value<int>(), "number of loci")
   ("lon_0", bpo::value<double>(), "Origin point longitude")
@@ -84,10 +84,10 @@ auto handle_options(int argc, char* argv[])
   ("reuse", bpo::value<int>()->default_value(1), "number of pseudo-observed data to be simulated under one demographic history")
   ("log-history",  bpo::value<std::string>(), "output history in GeoTiff format if option specified")
   ;
-  bpo::options_description command_line_options{"Command line options"};
+  bpo::options_description command_line_options;
   command_line_options.add(generic_options).add(general_options).add(model_options).add(other_options);
 
-  bpo::options_description file_options{"File options"};
+  bpo::options_description file_options{"General options (command line values will overwrite congif file values)"};
   file_options.add(general_options).add(model_options).add(other_options);
 
   bpo::variables_map vm;
@@ -102,11 +102,13 @@ auto handle_options(int argc, char* argv[])
     // --help option
     if (vm.count("help"))
     {
-      std::cout << "This is Quetzal-EGG-1 coalescence simulator." << std::endl;
-      std::cout << "Purpose: simulate gene trees in an heterogeneous landscape." << std::endl;
-      std::cout << "Author: Arnaud Becheler, 2021." << std::endl;
-      std::cout << "Usage: " << argv[0] << " [options] <config> <suitability> <tips> <output> ...\n";
-      std::cout << "\n" << command_line_options << std::endl;
+      std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+      std::cout << "| This is Quetzal-EGG-1 coalescence simulator.                                        |" << std::endl;
+      std::cout << "|   - Purpose: simulate gene trees in an heterogeneous landscape.                     |" << std::endl;
+      std::cout << "|   - Author: Arnaud Becheler, 2021.                                                  |" << std::endl;
+      std::cout << "|   - Usage: " << argv[0] << " [options] <config> <suitability> <tips> <output> ...    " << std::endl;
+      std::cout << "--------------------------------------------------------------------------------------|" << std::endl;
+      std::cout << "\n" << generic_options << std::endl;
       std::cout << "\n" << file_options << std::endl;
       return vm;
       // SUCCESS
