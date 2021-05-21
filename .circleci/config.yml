@@ -2,7 +2,7 @@ version: 2.1
 executors:
   exectr:
     docker:
-      - image: arnaudbecheler/quetzal-eggs:latest 
+      - image: arnaudbecheler/quetzal-eggs 
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
             cmake --build .
       - persist_to_workspace:
           root: .
-          paths: build  
+          paths: build
 
 workflows:
   version: 2
