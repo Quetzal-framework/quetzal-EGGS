@@ -2,13 +2,19 @@ version: 2.1
 executors:
   exectr:
     docker:
-      - image: arnaudbecheler/quetzal-eggs:latest 
+      - image: arnaudbecheler/quetzal-eggs:latest
 
 jobs:
   build:
     executor: exectr
     steps:
       - checkout
+      - run:
+          name: Setup quetzal child repo
+          command: |
+            cd quetzal-EGGS-core/quetzal
+            git submodule init
+            git submodule update
       - run:
           name: Setup cmake and build artifacts
           command: |
