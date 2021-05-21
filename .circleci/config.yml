@@ -2,7 +2,7 @@ version: 2.1
 executors:
   exectr:
     docker:
-      - image: arnaudbecheler/quetzal-eggs 
+      - image: arnaudbecheler/quetzal-eggs:latest 
 
 jobs:
   build:
