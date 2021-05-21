@@ -1,5 +1,7 @@
 # quetzal-EGGS
 
+[![Becheler](https://circleci.com/gh/Becheler/quetzal-EGGS.svg?style=svg)](https://app.circleci.com/pipelines/github/Becheler)
+
 Suit of coalescence-based simulation programs for spatial population genetics.
 
 Website: https://becheler.github.io/pages/quetzal_eggs/home
