@@ -1,0 +1,27 @@
+version: 2.1
+executors:
+  exectr:
+    docker:
+      - image: arnaudbecheler/quetzal-eggs:latest 
+
+jobs:
+  build:
+    executor: exectr
+    steps:
+      - checkout
+      - run:
+          name: Setup cmake and build artifacts
+          command: |
+            mkdir build
+            cd build
+            cmake ..
+            cmake --build .
+      - persist_to_workspace:
+          root: .
+          paths: build  
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - build
