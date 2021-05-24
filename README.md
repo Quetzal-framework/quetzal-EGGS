@@ -25,19 +25,19 @@ in a SQLite database.
 
 ## Installation
 
-### From source with Great Lakes
-
 In the current state of the project, installing the project from source is the only
-option. You will need to make sure that the dependencies are met on your system.
+option available. You will need to make sure that the dependencies are met on your system.
 
-If you are using the [Great Lakes Slurm cluster](https://arc.umich.edu/greatlakes/)
+### From source with the Great Lakes Slurm Cluster
+
+If you are a user of the [Great Lakes Slurm cluster](https://arc.umich.edu/greatlakes/)
 from University of Michigan, you can load all the required dependencies by typing:
 
 ```
 module load cmake/3.17.3 gcc/8.2.0 gdal/3.0.1 boost/1.75.0
 ```
 
-Then you can build the project typing:
+Then build the project with:
 
 ```
 git clone --recurse-submodules https://github.com/Becheler/quetzal-EGGS
