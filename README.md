@@ -1,4 +1,4 @@
-# quetzal-EGGS
+# quetzal-EGGS <img align="right" width="145" height="90" src="https://github.com/Becheler/Becheler.github.io/blob/master/draw/logos/quetzal_eggs.png">
 
 [![Becheler](https://circleci.com/gh/Becheler/quetzal-EGGS.svg?style=shield)](https://app.circleci.com/pipelines/github/Becheler)
 
