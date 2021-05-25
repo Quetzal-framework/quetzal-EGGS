@@ -106,3 +106,5 @@ If tests are failing and you want to output the reason of the failure, use inste
 ```
 CTEST_OUTPUT_ON_FAILURE=TRUE cmake --build .
 ```
+
+## Usage <img align="right" width="400" src="https://github.com/Becheler/Becheler.github.io/blob/master/draw/quetzal-EGGS/readme_scheme.svg">
