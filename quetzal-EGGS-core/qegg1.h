@@ -157,7 +157,7 @@ public:
   {
     sqlite3pp::command cmd(
       this->m_database,
-      "INSERT INTO core4_pods (lon_0, lat_0, N_0, duration, K_suit, K_max, K_min, p_K, r, emigrant_rate, newicks) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+      "INSERT INTO quetzal_EGG_1 (lon_0, lat_0, N_0, duration, K_suit, K_max, K_min, p_K, r, emigrant_rate, newicks) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
     );
     cmd.binder() << vm["lon_0"].as<double>()
                   << vm["lat_0"].as<double>()
@@ -178,7 +178,7 @@ public:
   {
     sqlite3pp::command cmd(
       this->m_database,
-      "INSERT INTO core4_pods (lon_0, lat_0, N_0, duration, K_suit, K_max, K_min, p_K, r, emigrant_rate, newicks) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+      "INSERT INTO quetzal_EGG_1 (lon_0, lat_0, N_0, duration, K_suit, K_max, K_min, p_K, r, emigrant_rate, newicks) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
     );
     cmd.binder() << vm["lon_0"].as<double>()
                   << vm["lat_0"].as<double>()
@@ -202,7 +202,7 @@ private:
   {
     sqlite3pp::command cmd(
       this->m_database,
-      "CREATE TABLE IF NOT EXISTS core4_pods(lon_0 DOUBLE, lat_0 DOUBLE, N_0 INTEGER, duration INTEGER, K_suit INTEGER, K_max INTEGER, K_min INTEGER, p_K DOUBLE, r DOUBLE, emigrant_rate DOUBLE, newicks TEXT)"
+      "CREATE TABLE IF NOT EXISTS quetzal_EGG_1(lon_0 DOUBLE, lat_0 DOUBLE, N_0 INTEGER, duration INTEGER, K_suit INTEGER, K_max INTEGER, K_min INTEGER, p_K DOUBLE, r DOUBLE, emigrant_rate DOUBLE, newicks TEXT)"
     );
     cmd.execute();
   }
