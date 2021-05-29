@@ -4,7 +4,7 @@ find_package(GDAL QUIET)
 
 if(GDAL_FOUND)
   get_property(_loc TARGET GDAL::GDAL PROPERTY LOCATION)
-  message(STATUS "Found GDAL: ${_loc} (version ${GDAL_VERSION})")
+  message(STATUS "Found GDAL: ${_loc} ${GDAL_INCLUDE_DIR} (version ${GDAL_VERSION})")
   add_library(gdal_external INTERFACE)  # dummy
 else()
   message(STATUS "GDAL could not be located, downloading and building version 3.1 instead.")
