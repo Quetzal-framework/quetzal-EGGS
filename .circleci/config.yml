@@ -10,11 +10,12 @@ jobs:
     executor: exectr
     steps:
       - checkout
-      - run: git clone https://github.com/Becheler/quetzal
-      - run: mkdir quetzal/build
-      - run: cd quetzal/build
-      - run: cmake ..
-      - run: cmake --build .
+      - run: | 
+          git clone https://github.com/Becheler/quetzal
+          mkdir quetzal/build
+          cd quetzal/build
+          cmake ..
+          cmake --build .
       - persist_to_workspace:
           root: .
           paths: 
