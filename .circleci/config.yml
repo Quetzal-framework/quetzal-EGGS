@@ -8,30 +8,28 @@ executors:
 jobs:
   build-quetzal:
     executor: exectr
-    step:
+    steps:
       - checkout
-      - run:
-        name: Setup quetzal repo
-        command: |
-          git clone https://github.com/Becheler/quetzal
-          mkdir quetzal/build
-          cd quetzal/build
-          cmake ..
-          cmake --build .
+      - run: git clone https://github.com/Becheler/quetzal
+      - run: mkdir quetzal/build
+      - run: cd quetzal/build
+      - run: cmake ..
+      - run: cmake --build .
       - persist_to_workspace:
           root: .
-          paths: quetzal/build/*
+          paths: 
+            - quetzal
 
   test-quetzal:
     executor: exectr
-    step:
+    steps:
       - attach_workspace:
-        at: .
+          at: .
       - run:
-        name: Execute tests
-        command: |
-          cd quetzal/build
-          ctest
+          name: Execute tests
+          command: |
+            cd quetzal/build
+            ctest
 
   build-and-test-quetzal-EGGS:
     executor: exectr
@@ -52,7 +50,8 @@ jobs:
             cmake --build .
       - persist_to_workspace:
           root: .
-          paths: build
+          paths: 
+            - build
 
 workflows:
   version: 2
@@ -61,6 +60,5 @@ workflows:
       - build-quetzal
       - test-quetzal
       - build-and-test-quetzal-EGGS:
-        - requires:
-          - build-quetzal
-          - test-quetzal
+          requires:
+            - test-quetzal
