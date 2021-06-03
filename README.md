@@ -9,15 +9,15 @@ model parameters in a map, simulate coalescence trees for independent genetic ma
 write outputs in a SQL database.
 
 It compares to other available simulation resources ( like [SPLATCHE](http://splatche.com/), [simcoal2](http://cmpg.unibe.ch/software/simcoal2/), [egglib](http://mycor.nancy.inra.fr/egglib/index.html), [msprime](http://msprime.readthedocs.io/en/stable/index.html) or [necsim](https://pycoalescence.readthedocs.io/en/release/necsim/necsim_library.html)) by offering original demographic
-(forward in time) models. Being built from [Quetzal-CoalTL](https://github.com/Becheler/quetzal), the
-true strength of this project is how easily demographic assumptions (continental dispersal kernels, oceanic dispersal barriers,
-  niche, density-dependence ...)  can be integrated in a new simulator.
+(forward in time) models. Being built from [Quetzal-CoalTL](https://github.com/Becheler/quetzal),
+our project true strength relies in the ease with which new demographic assumptions
+(continental dispersal kernels, oceanic dispersal barriers, niche, density-dependence ...)
+can be integrated in a new simulator.
 
 - In the future, there will be (hopefully) several programs with different demographic models.
 - But right now, it's work in progress, so there is only one model available!
 
-<!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/ntkme/github-buttons" data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a> Star us on GitHub — it keeps me motivated!
+If you like the idea of the project, star us on GitHub — it keeps me motivated!
 
 You can read more on the (to-be-updated) website: https://becheler.github.io/pages/quetzal_eggs/home
 
