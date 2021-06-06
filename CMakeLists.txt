@@ -1,57 +1,36 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(quetzal-EGGS)
+# project name and language
+project(quetzal-EGGS LANGUAGES CXX)
 
+# we default to Release build type
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 
-message(STATUS: "Buildtype: ${CMAKE_BUILD_TYPE}")
-
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "C++ flags, Debug configuration: ${CMAKE_CXX_FLAGS_DEBUG}")
 message(STATUS "C++ flags, Release configuration: ${CMAKE_CXX_FLAGS_RELEASE}")
+message(STATUS "C++ flags, Release configuration with Debug info: ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+message(STATUS "C++ flags, minimal Release configuration: ${CMAKE_CXX_FLAGS_MINSIZEREL}")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set_property(DIRECTORY PROPERTY EP_BASE ${CMAKE_BINARY_DIR}/subprojects)
+find_package(Boost 1.61 REQUIRED COMPONENTS program_options)
 
-set(STAGED_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/stage)
-message(STATUS "${PROJECT_NAME} staged install: ${STAGED_INSTALL_PREFIX}")
+find_package(SQLite3 REQUIRED)
+if (SQLite3_FOUND)
+    include_directories(${SQLite3_INCLUDE_DIRS})
+endif()
 
-list(APPEND BOOST_COMPONENTS_REQUIRED program_options)
-set(Boost_MINIMUM_REQUIRED 1.61)
-add_subdirectory(external)
+find_package(GDAL REQUIRED)
+if (GDAL_FOUND)
+    include_directories(${GDAL_INCLUDE_DIR})
+endif()
 
-include(ExternalProject)
-include(CTest)
+add_subdirectory(src)
 
-ExternalProject_Add(
-  ${PROJECT_NAME}_core
-  DEPENDS
-    boost_external
-    sqlite3_external
-    gdal_external
-  SOURCE_DIR
-    ${CMAKE_CURRENT_LIST_DIR}/quetzal-EGGS-core
-  CMAKE_ARGS
-    -DCMAKE_INSTALL_PREFIX=${STAGED_INSTALL_PREFIX}
-    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
-    -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
-    -DCMAKE_CXX_STANDARD_REQUIRED=${CMAKE_CXX_STANDARD_REQUIRED}
-  CMAKE_CACHE_ARGS
-    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-    -DCMAKE_INCLUDE_PATH:PATH=${BOOST_INCLUDEDIR}
-    -DCMAKE_LIBRARY_PATH:PATH=${BOOST_LIBRARYDIR}
-    -DCMAKE_INCLUDE_PATH:PATH=${SQLite3_INCLUDE_DIRS}
-    -DCMAKE_LIBRARY_PATH:PATH=${STAGED_INSTALL_PREFIX}
-    -DCMAKE_INCLUDE_PATH:PATH=${GDAL_INCLUDE_DIR}
-    -DCMAKE_LIBRARY_PATH:PATH=${GDAL_LIBRARY}
-  BUILD_ALWAYS
-    1
-  TEST_AFTER_INSTALL 1
-  )
-
-  INSTALL(DIRECTORY ${CMAKE_BINARY_DIR}/stage/bin DESTINATION ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME})
+enable_testing()
+add_subdirectory(test)
