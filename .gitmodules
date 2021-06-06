@@ -1,3 +1,0 @@
-[submodule "external/quetzal"]
-	path = quetzal-EGGS-core/quetzal
-	url = https://github.com/Becheler/quetzal.git

@@ -10,7 +10,7 @@ jobs:
     executor: exectr
     steps:
       - checkout
-      - run: | 
+      - run: |
           git clone https://github.com/Becheler/quetzal
           mkdir quetzal/build
           cd quetzal/build
@@ -18,7 +18,7 @@ jobs:
           cmake --build .
       - persist_to_workspace:
           root: .
-          paths: 
+          paths:
             - quetzal
 
   test-quetzal:
@@ -39,7 +39,7 @@ jobs:
       - run:
           name: Setup quetzal child repo
           command: |
-            cd quetzal-EGGS-core/quetzal
+            cd src/quetzal
             git submodule init
             git submodule update
       - run:
@@ -51,7 +51,7 @@ jobs:
             cmake --build .
       - persist_to_workspace:
           root: .
-          paths: 
+          paths:
             - build
 
 workflows:
