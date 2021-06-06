@@ -1,0 +1,3 @@
+[submodule "src/quetzal"]
+	path = src/quetzal
+	url = https://github.com/Becheler/quetzal
