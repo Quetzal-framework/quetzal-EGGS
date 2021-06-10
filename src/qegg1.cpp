@@ -35,7 +35,11 @@ int main(int argc, char* argv[])
     std::cerr << "ERROR: " << e.what() << std::endl << std::endl;
     return ERROR_IN_COMMAND_LINE;
   }
-
+  catch ( const std::exception& e )
+  {
+    std::cerr << e.what() << std::endl;
+    return ERROR_IN_COMMAND_LINE;
+}
   // should do the following without fear because everything is required to be present
 
   // --verbose option
