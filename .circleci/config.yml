@@ -32,7 +32,7 @@ jobs:
             cd quetzal/build
             ctest
 
-  build-and-test-quetzal-EGGS:
+  build-and-test-EGGS:
     executor: exectr
     steps:
       - checkout
@@ -49,10 +49,7 @@ jobs:
             cd build
             cmake ..
             cmake --build .
-      - persist_to_workspace:
-          root: .
-          paths:
-            - build
+            ctest
 
 workflows:
   version: 2
@@ -62,6 +59,6 @@ workflows:
       - test-quetzal:
           requires:
             - build-quetzal
-      - build-and-test-quetzal-EGGS:
+      - build-and-test-EGGS:
           requires:
             - test-quetzal

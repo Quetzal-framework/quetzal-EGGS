@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 add_test(
-  NAME test_help_EGG1
+  NAME test_help_quetzal_EGG1
 COMMAND ${PROJECT_BINARY_DIR}/src/EGG1 --help)
 
 add_test(
