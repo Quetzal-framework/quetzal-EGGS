@@ -63,7 +63,7 @@ jobs:
           name: Execute tests
           command: |
             cd build
-            ctest
+            ctest --output-on-failure
 workflows:
   version: 2
   build-and-test:
