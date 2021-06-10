@@ -75,6 +75,6 @@ workflows:
       - build-EGGS:
           requires:
             - test-quetzal
-      -test-EGGS:
+      - test-EGGS:
           requires:
             - build-EGGS
