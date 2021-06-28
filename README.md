@@ -81,7 +81,7 @@ and access its help menu with:
 ```
 ./EGG1 --help   
 ```
-You can run a simulation with the default settings, adding 10 replicates under the same demographic history:
+You can run a simulation with the default settings:
 ```
 ./EGG1 --config quetzal_EGG1.config --suitability suitability.tif --tips sample.csv
 ```
