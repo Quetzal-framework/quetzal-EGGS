@@ -42,15 +42,16 @@ in a SQLite database.
 
 ### Using Docker
 
+If you want to try quetzal-EGGS, or just do some tests on local before to go wild on a cluster, Docker is for you.
+
 [Docker](https://www.docker.com/) is a software that can package an application and its dependencies in a virtual
 container that can run on any Linux, Windows, or macOS computer. It is more efficient
-than virtual machines, but less than system-wide installation. Use it if you want
-to test quetzal-EGGS before to use it on a cluster.
+than virtual machines, but less than system-wide installation.
 
-- First, [install Docker](https://docs.docker.com/get-docker/)
-- Then, download [our Docker image](https://hub.docker.com/r/arnaudbecheler/quetzal-eggs) by typing '''docker pull arnaudbecheler/quetzal-eggs''' in a terminal
+- [Install Docker](https://docs.docker.com/get-docker/)
+- Then, download [our Docker image](https://hub.docker.com/r/arnaudbecheler/quetzal-eggs) by typing ```docker pull arnaudbecheler/quetzal-eggs``` in a terminal
 - Enter a docker interactive session with ```docker run --name mycontainer -it arnaudbecheler/quetzal-eggs bash```
-- Then build and install the project to ```/home/EGGS``` directory with:
+- Build and install the project to ```/home/EGGS``` directory with:
 ```
 git clone --recurse-submodules https://github.com/Becheler/quetzal-EGGS
 cd quetzal-EGGS
