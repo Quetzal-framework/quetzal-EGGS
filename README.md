@@ -40,8 +40,56 @@ in a SQLite database.
 
 ## Installation
 
-In the current state of the project, installing the project from source is the only
-option available. You will need to make sure that the dependencies are met on your system.
+### Using Docker
+
+[Docker](https://www.docker.com/) is a software that can package an application and its dependencies in a virtual
+container that can run on any Linux, Windows, or macOS computer. It is more efficient
+than virtual machines, but less than system-wide installation. Use it if you want
+to test quetzal-EGGS before to use it on a cluster.
+
+- First, [install Docker](https://docs.docker.com/get-docker/)
+- Then, download [our Docker image](https://hub.docker.com/r/arnaudbecheler/quetzal-eggs) by typing '''docker pull arnaudbecheler/quetzal-eggs''' in a terminal
+- Enter a docker interactive session with ```docker run --name mycontainer -it arnaudbecheler/quetzal-eggs bash```
+- Then build and install the project to ```/home/EGGS``` directory with:
+```
+git clone --recurse-submodules https://github.com/Becheler/quetzal-EGGS
+cd quetzal-EGGS
+mkdir Release
+cd Release
+cmake .. -DCMAKE_INSTALL_PREFIX="/home/EGGS"
+cmake --build . --config Release --target install
+```
+You can now leave the build directory to see what is available:
+```
+cd /home/EGGS/
+ls
+```
+You should see a binary and some default configuration files:
+```
+EGG1  quetzal_EGG1.config  sample.csv  suitability.tif
+```
+- ```EGG1``` is the program binary implementing model 1
+- ```quetzal_EGG1.config``` is the configuration file associated to the model 1
+- ```sample.csv``` lists the coordinates of sampled nodes (tips)
+- ```suitability.tif``` is the default landscape
+You can test the binary with:
+```
+./EGG1 --version
+```
+and access its help menu with:
+```
+./EGG1 --help   
+```
+You can run a simulation with the default settings, adding 10 replicates under the same demographic history:
+```
+./EGG1 --config quetzal_EGG1.config --suitability suitability.tif --tips sample.csv
+```
+**In another terminal**, go to the destination folder of your choice and copy the simulation result with the following command:
+```
+docker cp mycontainer:/home/EGGS/test_pods.db .
+```
+You can finally [upload the .db here](https://inloop.github.io/sqlite-viewer/) to visualize the results.
+You can exit ```mycontainer``` by typing ```exit```.
 
 ### From source with the Great Lakes Slurm Cluster
 
