@@ -9,28 +9,28 @@
 *                                                                      *
 ************************************************************************/
 
-#ifndef __M4_REALITY_CHECK_H_INCLUDED__
-#define __M4_REALITY_CHECK_H_INCLUDED__
+#ifndef __EGG1_CONTEXT_H_INCLUDED__
+#define __EGG1_CONTEXT_H_INCLUDED__
 
+#include "EGG1_database.h"
 #include "quetzal/include/quetzal/geography/DiscreteLandscape.h"
 
 #include "utils.h"
 #include "rapidcsv.h"
+#include "sqlite3pp.h"
 
 #include <boost/program_options.hpp>
-
-#include "sqlite3pp.h"
 
 #include <random>
 #include <algorithm>
 #include <cassert>
 #include <vector>
 #include <string>
-#include <fstream>
 #include <sstream>
 #include <iostream>
 #include <filesystem>
 #include <functional>
+
 namespace coal = quetzal::coalescence;
 namespace geo = quetzal::geography;
 namespace demography = quetzal::demography;
@@ -39,176 +39,10 @@ namespace sim = quetzal::simulator;
 namespace expr = quetzal::expressive;
 namespace bpo = boost::program_options;
 
-// Returns a map with the program options
-auto handle_options(int argc, char* argv[])
-{
-  // Declare a group of options that will be allowed only on command line
-  bpo::options_description generic_options{"Command-line-only options"};
-  generic_options.add_options()
-  ("help,h", "help screen")
-  ("verbose,v", "verbose mode")
-  ("version", "software version")
-  ("config", bpo::value<std::string>()->required(), "configuration file")
-  ;
-  // Allowed both on command line and in config file
-  bpo::options_description general_options{"Input/output options"};
-  general_options.add_options()
-  ("suitability", bpo::value<std::string>()->required(), "input suitability map in GeoTiFF (.tiff) format")
-  ("tips",  bpo::value<std::string>()->required(), "input CSV file listing <ID,latitude,longitude> for every node")
-  ("output", bpo::value<std::string>()->default_value("out.db"), "SQLite 3 database output")
-  ;
-  // Declare a simpler way to call on command line
-  bpo::positional_options_description positional_options;
-  positional_options.add("config", 1);
-  positional_options.add("suitability", 1);
-  positional_options.add("tips", 1);
-  positional_options.add("output", 1);
-  // Allowed both on command line and in config file
-  bpo::options_description model_options{"Demogenetic model parameters"};
-  model_options.add_options()
-  ("n_loci", bpo::value<int>(), "number of loci")
-  ("lon_0", bpo::value<double>(), "Origin point longitude")
-  ("lat_0", bpo::value<double>(), "Origin point latitude")
-  ("N_0", bpo::value<int>(), "Number of gene copies at introduction point")
-  ("duration", bpo::value<int>(), "Number of generations to simulate")
-  ("K_suit", bpo::value<int>(), "Carrying capacity in suitable areas")
-  ("K_max", bpo::value<int>(), "Highest carrying capacity in areas with null suitability")
-  ("K_min", bpo::value<int>(), "Lowest carrying capacity in areas with null suitability")
-  ("p_K", bpo::value<double>(), "Probability to have highest carrying capacity in areas with 0 suitability")
-  ("r", bpo::value<double>(), "Growth rate")
-  ("emigrant_rate", bpo::value<double>(), "Emigrant rate between the four neighboring cells")
-  ;
-  // Allowed both on command line and in config file
-  bpo::options_description other_options{"Other options"};
-  other_options.add_options()
-  ("reuse", bpo::value<int>()->default_value(1), "number of pseudo-observed data to be simulated under one demographic history")
-  ("log-history",  bpo::value<std::string>(), "output history in GeoTiff format if option specified")
-  ;
-  bpo::options_description command_line_options;
-  command_line_options.add(generic_options).add(general_options).add(model_options).add(other_options);
-
-  bpo::options_description file_options{"General options (command line values will overwrite congif file values)"};
-  file_options.add(general_options).add(model_options).add(other_options);
-
-  bpo::variables_map vm;
-  try
-  {
-    //bpo::store(po::parse_command_line(argc, argv, command_line_options), vm);
-    bpo::store(
-      bpo::command_line_parser(argc, argv).
-      options(command_line_options).
-      positional(positional_options).
-      run(), vm); // can throw
-    // --help option
-    if (vm.count("help"))
-    {
-      std::cout << "--------------------------------------------------------------------------------------" << std::endl;
-      std::cout << "| This is Quetzal-EGG-1 coalescence simulator.                                        |" << std::endl;
-      std::cout << "|   - Purpose: simulate gene trees in an heterogeneous landscape.                     |" << std::endl;
-      std::cout << "|   - Author: Arnaud Becheler, 2021.                                                  |" << std::endl;
-      std::cout << "|   - Usage: " << argv[0] << " [options] <config> <suitability> <tips> <output> ...    " << std::endl;
-      std::cout << "--------------------------------------------------------------------------------------|" << std::endl;
-      std::cout << "\n" << generic_options << std::endl;
-      std::cout << "\n" << file_options << std::endl;
-      return vm;
-      // SUCCESS
-    }
-    // --version option
-    if (vm.count("version"))
-    {
-      std::cout << "quetzal-EGG-1 version 0.1" << std::endl;
-      return vm;
-      // SUCCESS
-    }
-    bpo::notify(vm); // throws on error, so do after help in case there are any problems
-  }
-  catch(boost::program_options::required_option& e)
-  {
-    throw;
-  }
-  catch(boost::program_options::error& e)
-  {
-    throw;
-  }
-
-  if (vm.count("config"))
-  {
-    std::ifstream ifs{vm["config"].as<std::string>().c_str()};
-    if (ifs){
-      store(parse_config_file(ifs, file_options), vm);
-    }
-  }
-
-  notify(vm);
-  return vm;
-} // end of handle_options
-
-//Class for wrapping sqlite3pp code
-class database_type
-{
-public:
-
-  database_type(std::string const& filename){
-  this->m_database = sqlite3pp::database(filename.c_str());
-  create_table();
-  }
-
-  auto insert_params_results_and_get_rowid(bpo::variables_map vm, std::string const& newicks)
-  {
-    sqlite3pp::command cmd(
-      this->m_database,
-      "INSERT INTO quetzal_EGG_1 (lon_0, lat_0, N_0, duration, K_suit, K_max, K_min, p_K, r, emigrant_rate, newicks) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
-    );
-    cmd.binder() << vm["lon_0"].as<double>()
-                  << vm["lat_0"].as<double>()
-                  << vm["N_0"].as<int>()
-                  << vm["duration"].as<int>()
-                  << vm["K_suit"].as<int>()
-                  << vm["K_max"].as<int>()
-                  << vm["K_min"].as<int>()
-                  << vm["p_K"].as<double>()
-                  << vm["r"].as<double>()
-                  << vm["emigrant_rate"].as<double>()
-                  << newicks;
-    cmd.execute();
-    return this->m_database.last_insert_rowid();
-  }
-
-  auto insert_params_failure_and_get_rowid(bpo::variables_map vm)
-  {
-    sqlite3pp::command cmd(
-      this->m_database,
-      "INSERT INTO quetzal_EGG_1 (lon_0, lat_0, N_0, duration, K_suit, K_max, K_min, p_K, r, emigrant_rate, newicks) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
-    );
-    cmd.binder() << vm["lon_0"].as<double>()
-                  << vm["lat_0"].as<double>()
-                  << vm["N_0"].as<int>()
-                  << vm["duration"].as<int>()
-                  << vm["K_suit"].as<int>()
-                  << vm["K_max"].as<int>()
-                  << vm["K_min"].as<int>()
-                  << vm["p_K"].as<double>()
-                  << vm["r"].as<double>()
-                  << vm["emigrant_rate"].as<double>()
-                  << "";
-    cmd.execute();
-    return this->m_database.last_insert_rowid();
-  }
-
-private:
-  sqlite3pp::database m_database;
-
-  void create_table()
-  {
-    sqlite3pp::command cmd(
-      this->m_database,
-      "CREATE TABLE IF NOT EXISTS quetzal_EGG_1(lon_0 DOUBLE, lat_0 DOUBLE, N_0 INTEGER, duration INTEGER, K_suit INTEGER, K_max INTEGER, K_min INTEGER, p_K DOUBLE, r DOUBLE, emigrant_rate DOUBLE, newicks TEXT)"
-    );
-    cmd.execute();
-  }
-
-};
-
+/// @brief Principal simulation class gathering simulation context elements.
+/// @details
+/// Gather context elemets such as program options, database access, landscape representation,
+/// sampled nodes, reproduction/disersal expressions and forward them to a simulation core.
 class SimulationContext
 {
 public:
@@ -222,28 +56,27 @@ public:
   m_reproduction_expr(build_reproduction_function(gen)),
   m_dispersal_kernel(build_dispersal_kernel())
   {
-    if(verbose){
-      show_reprojected_sample();
-    }
+    if(verbose) show_reprojected_sample();
   };
-
-  void run(std::mt19937& gen)
-  {
+  /// @brief Entry point after contruction
+  void run(std::mt19937& gen){
     expand_demography(gen);
     maybe_save_demography();
     int nb_reuse = m_vm["reuse"].as<int>();
-    for(int i=1; i <= nb_reuse; ++i){
-      try{
+    for(int i=1; i <= nb_reuse; ++i)
+    {
+      try
+      {
         simulate_coalescence(gen);
         record_params_and_genealogies();
-      }catch(const std::domain_error &){
+      }
+      catch(const std::domain_error &)
+      {
         record_params_and_failure();
       }
     }
   }
-
 private:
-
   using time_type = int;
   using landscape_type = geo::DiscreteLandscape<std::string,time_type>;
   using coord_type = landscape_type::coord_type;
@@ -252,7 +85,6 @@ private:
   using coal_policy = coal::policies::distance_to_parent_leaf_name<coord_type, time_type>;
   using core_type = sim::SpatiallyExplicit<coord_type, time_type, demographic_policy, coal_policy>;
   using options_type = bpo::variables_map;
-  // eww, but it works
   using dispersal_type = demography::strategy::mass_based::light_neighboring_migration
   <
     coord_type,
@@ -260,7 +92,6 @@ private:
     std::function<std::vector<coord_type>(coord_type)>
   >;
   using reproduction_type = std::function<unsigned int(std::mt19937&, coord_type, time_type)>;
-
   bool verbose;
   bpo::variables_map m_vm;
   database_type m_database;
@@ -287,7 +118,6 @@ private:
     }
   }
 
-  // TODO: pas sûr de la syntaxe du try/catch
   landscape_type build_landscape()
   {
     std::string filename = m_vm["suitability"].as<std::string>();
@@ -353,12 +183,10 @@ private:
     if(verbose){std::cout << "Reproduction expression initialization" << std::endl;}
     using expr::literal_factory;
     using expr::use;
-
-    // growth rate
+    // growth rate:
     literal_factory<coord_type, time_type> lit;
     auto r = lit( m_vm["r"].as<double>() );
-
-    // carrying capacity
+    // carrying capacity:
     auto suitability = m_landscape["suitability"];
     int K_suit = m_vm["K_suit"].as<int>();
     int K_min = m_vm["K_min"].as<int>();
@@ -367,13 +195,13 @@ private:
     auto K = [K_suit, K_min, K_max, p_K, &gen, suitability](coord_type const& x, time_type)
     {
       if( suitability(x,0) <= 0.1)
-      { //ocean cell
+      {
+        //ocean cell:
         return std::bernoulli_distribution(p_K)(gen) ? K_max : K_min;
       }else{
         return static_cast<int>(static_cast<double>(K_suit)*suitability(x,0));
       }
     };
-
     // Retrieve population size reference to define a logistic growth process
     auto pop_sizes = m_core.pop_size_history();
     auto N = use( [pop_sizes](coord_type x, time_type t){ return pop_sizes(x,t);} );
@@ -448,6 +276,6 @@ private:
     auto ID = m_database.insert_params_failure_and_get_rowid(m_vm);
     std::cout << ID << "\tFAILED" <<std::endl;
   }
-};
+}; // end SimulationContext
 
 #endif
