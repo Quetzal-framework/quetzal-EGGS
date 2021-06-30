@@ -35,7 +35,6 @@ namespace coal = quetzal::coalescence;
 namespace geo = quetzal::geography;
 namespace demography = quetzal::demography;
 namespace genet = quetzal::genetics;
-namespace sim = quetzal::simulator;
 namespace expr = quetzal::expressive;
 namespace bpo = boost::program_options;
 
@@ -83,7 +82,7 @@ private:
   using sample_type = std::vector<decrypt::utils::GeneCopy>;
   using demographic_policy = demography::strategy::mass_based;
   using coal_policy = coal::policies::distance_to_parent_leaf_name<coord_type, time_type>;
-  using core_type = sim::SpatiallyExplicit<coord_type, time_type, demographic_policy, coal_policy>;
+  using core_type = quetzal::ForwardBackwardSpatiallyExplicit<coord_type, time_type, demographic_policy, coal_policy>;
   using options_type = bpo::variables_map;
   using dispersal_type = demography::strategy::mass_based::light_neighboring_migration
   <
