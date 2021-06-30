@@ -1,8 +1,8 @@
 //
 //  Copyright © 2020 Arnaud Becheler. All rights reserved.
 //
-#include "qegg1.h"
-#include <boost/program_options.hpp>
+#include "EGG1_options.h"
+#include "EGG1_context.h"
 
 namespace bpo = boost::program_options;
 
