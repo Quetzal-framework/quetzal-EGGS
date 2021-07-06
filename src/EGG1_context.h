@@ -80,11 +80,11 @@ private:
   using landscape_type = geo::DiscreteLandscape<std::string,time_type>;
   using coord_type = landscape_type::coord_type;
   using sample_type = std::vector<decrypt::utils::GeneCopy>;
-  using demographic_policy = demography::strategy::mass_based;
+  using demographic_policy = demography::policy::mass_based;
   using coal_policy = coal::policies::distance_to_parent_leaf_name<coord_type, time_type>;
   using core_type = quetzal::ForwardBackwardSpatiallyExplicit<coord_type, time_type, demographic_policy, coal_policy>;
   using options_type = bpo::variables_map;
-  using dispersal_type = demography::strategy::mass_based::light_neighboring_migration
+  using dispersal_type = demography::policy::mass_based::neighboring_migration
   <
     coord_type,
     std::function<double(coord_type)>,
@@ -223,7 +223,7 @@ private:
     double emigrant_rate = m_vm["emigrant_rate"].as<double>();
     auto env_ref = std::cref(m_landscape);
     std::function<std::vector<coord_type>(coord_type)> get_neighbors = decrypt::utils::make_neighboring_cells_functor(env_ref);
-    return demographic_policy::make_light_neighboring_migration(coord_type(), emigrant_rate, friction, get_neighbors);
+    return demographic_policy::make_neighboring_migration(coord_type(), emigrant_rate, friction, get_neighbors);
   }
 
   void expand_demography(std::mt19937 & gen)
