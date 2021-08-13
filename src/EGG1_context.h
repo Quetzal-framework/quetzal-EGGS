@@ -13,7 +13,7 @@
 #define __EGG1_CONTEXT_H_INCLUDED__
 
 #include "EGG1_database.h"
-#include "quetzal/include/quetzal/geography/DiscreteLandscape.h"
+#include "quetzal/quetzal.h"
 
 #include "utils.h"
 #include "rapidcsv.h"
@@ -31,7 +31,6 @@
 #include <filesystem>
 #include <functional>
 
-namespace coal = quetzal::coalescence;
 namespace geo = quetzal::geography;
 namespace demography = quetzal::demography;
 namespace genet = quetzal::genetics;
@@ -40,10 +39,39 @@ namespace bpo = boost::program_options;
 
 /// @brief Principal simulation class gathering simulation context elements.
 /// @details
-/// Gather context elemets such as program options, database access, landscape representation,
+/// Gather context elements such as program options, database access, landscape representation,
 /// sampled nodes, reproduction/disersal expressions and forward them to a simulation core.
 class SimulationContext
 {
+private:
+  // Type declaration
+  using time_type = int;
+  using landscape_type = geo::DiscreteLandscape<std::string,time_type>;
+  using coord_type = landscape_type::coord_type;
+  using sample_type = std::vector<EGGS::utils::GeneCopy>;
+  using dispersal_policy = quetzal::demography::dispersal_policy::mass_based;
+  using coalescence_policy = quetzal::coalescence::newick_with_distance_to_parent_and_leaf_name<coord_type, time_type>;
+  using memory_policy = quetzal::memory::pre_allocated;
+  using core_type = quetzal::ForwardBackwardSpatiallyExplicit<coord_type, dispersal_policy, coalescence_policy, memory_policy>;
+  using options_type = bpo::variables_map;
+  using dispersal_type = dispersal_policy::neighboring_migration
+  <
+    coord_type,
+    std::function<double(coord_type)>,
+    std::function<std::vector<coord_type>(coord_type)>
+  >;
+  using reproduction_type = std::function<unsigned int(std::mt19937&, coord_type, time_type)>;
+  // Members
+  bool verbose;
+  bpo::variables_map m_vm;
+  database_type m_database;
+  landscape_type m_landscape;
+  sample_type m_sample;
+  core_type m_core;
+  reproduction_type m_reproduction_expr;
+  time_type m_duration;
+  dispersal_type m_dispersal_kernel;
+  std::string m_newicks;
 public:
   SimulationContext(bpo::variables_map opts, std::mt19937& gen, bool verbose):
   verbose(verbose),
@@ -59,7 +87,7 @@ public:
   };
   /// @brief Entry point after contruction
   void run(std::mt19937& gen){
-    expand_demography(gen);
+    simulate_forward_demography(gen);
     maybe_save_demography();
     int nb_reuse = m_vm["reuse"].as<int>();
     for(int i=1; i <= nb_reuse; ++i)
@@ -76,33 +104,6 @@ public:
     }
   }
 private:
-  using time_type = int;
-  using landscape_type = geo::DiscreteLandscape<std::string,time_type>;
-  using coord_type = landscape_type::coord_type;
-  using sample_type = std::vector<decrypt::utils::GeneCopy>;
-  using demographic_policy = demography::policy::mass_based;
-  using coal_policy = coal::policies::distance_to_parent_leaf_name<coord_type, time_type>;
-  using core_type = quetzal::ForwardBackwardSpatiallyExplicit<coord_type, time_type, demographic_policy, coal_policy>;
-  using options_type = bpo::variables_map;
-  using dispersal_type = demography::policy::mass_based::neighboring_migration
-  <
-    coord_type,
-    std::function<double(coord_type)>,
-    std::function<std::vector<coord_type>(coord_type)>
-  >;
-  using reproduction_type = std::function<unsigned int(std::mt19937&, coord_type, time_type)>;
-  bool verbose;
-  bpo::variables_map m_vm;
-  database_type m_database;
-  landscape_type m_landscape;
-  sample_type m_sample;
-  core_type m_core;
-  reproduction_type m_reproduction_expr;
-  time_type m_t_0;
-  time_type m_sample_time;
-  dispersal_type m_dispersal_kernel;
-  std::string m_newicks;
-
   database_type build_database()
   {
     if(verbose){std::cout << "Database initialization" << std::endl;}
@@ -131,12 +132,11 @@ private:
     }
   }
 
-  // TODO haploid versus diploid. Plus, format changed: ID/coordinates/no genetics
   sample_type build_sample()
   {
     if(verbose){std::cout << "Tip nodes initialization" << std::endl;}
     std::string datafile = m_vm["tips"].as<std::string>();
-    using decrypt::utils::GeneCopy;
+    using EGGS::utils::GeneCopy;
     rapidcsv::Document doc(datafile);
     std::vector<std::string> IDs = doc.GetColumn<std::string>("ID");
     std::vector<double> v_lat = doc.GetColumn<double>("latitude");
@@ -169,10 +169,9 @@ private:
     if(verbose){std::cout << "Simulation core initialization" << std::endl;}
     coord_type x_0(m_vm["lat_0"].as<double>(), m_vm["lon_0"].as<double>());
     x_0 = m_landscape.reproject_to_centroid(x_0);
-    m_t_0 = 0;
-    m_sample_time = m_vm["duration"].as<int>();
     int N_0 = m_vm["N_0"].as<int>();
-    core_type core(x_0, m_t_0, N_0);
+    int duration = m_vm["duration"].as<int>();
+    core_type core(x_0, N_0, duration);
     core.ancestral_Wright_Fisher_N(N_0);
     return core;
   }
@@ -202,8 +201,7 @@ private:
       }
     };
     // Retrieve population size reference to define a logistic growth process
-    auto pop_sizes = m_core.pop_size_history();
-    auto N = use( [pop_sizes](coord_type x, time_type t){ return pop_sizes(x,t);} );
+    auto N = m_core.get_functor_N();
     auto g = N * ( lit(1) + r ) / ( lit(1) + ( (r * N)/K ));
     auto reproduction = [g](auto& gen, coord_type const&x, time_type t){
       std::poisson_distribution<unsigned int> poisson(g(x,t));
@@ -215,20 +213,27 @@ private:
   dispersal_type build_dispersal_kernel()
   {
     if(verbose){std::cout << "Dispersal kernel initialization" << std::endl;}
+    double emigrant_rate = m_vm["emigrant_rate"].as<double>();
     auto suitability = m_landscape["suitability"];
-    std::function<double(coord_type)> friction = [suitability](coord_type const& x){
+    // std::function for knowing type to store as member
+    std::function<double(coord_type)> friction = [suitability](coord_type const& x)
+    {
       if(suitability(x,0) <= 0.5) {return 0.99;} //ocean cell
       else return 1.0 - suitability(x, 0);
     };
-    double emigrant_rate = m_vm["emigrant_rate"].as<double>();
     auto env_ref = std::cref(m_landscape);
-    std::function<std::vector<coord_type>(coord_type)> get_neighbors = decrypt::utils::make_neighboring_cells_functor(env_ref);
-    return demographic_policy::make_neighboring_migration(coord_type(), emigrant_rate, friction, get_neighbors);
+    // std::function for knowing type to store as member
+    std::function<std::vector<coord_type>(coord_type)> get_neighbors = [env_ref](coord_type const& x)
+    {
+      return env_ref.get().direct_neighbors(x);
+    };
+    dispersal_type d =  dispersal_policy::make_neighboring_migration(coord_type(), emigrant_rate, friction, get_neighbors);
+    return d;
   }
 
-  void expand_demography(std::mt19937 & gen)
+  void simulate_forward_demography(std::mt19937 & gen)
   {
-    m_core.expand_demography(m_sample_time, m_reproduction_expr, m_dispersal_kernel, gen);
+    m_core.simulate_forward_demography(m_reproduction_expr, m_dispersal_kernel, gen);
   }
 
   void maybe_save_demography()
@@ -242,9 +247,10 @@ private:
         throw(std::runtime_error(message));
       }
       using expr::use;
-      auto pop_sizes = m_core.pop_size_history();
-      auto N = use( [pop_sizes](coord_type x, time_type t){ return pop_sizes(x,t);} );
-      m_landscape.export_to_geotiff(N, m_t_0, m_sample_time, [&pop_sizes](time_type const& t){return pop_sizes.get().definition_space(t);}, filename);
+      auto core_ref = std::cref(m_core);
+      auto N = m_core.get_functor_N();
+      auto space = [core_ref](time_type t){return core_ref.get().distribution_area(t);};
+      m_landscape.export_to_geotiff(N, 0, m_duration - 1, space, filename);
     }
   }
 
@@ -256,7 +262,7 @@ private:
     int n_loci = m_vm["n_loci"].as<int>();
     for(unsigned int locus = 0; locus < n_loci ; ++locus)
     {
-      genealogies.append(m_core.coalesce_to_mrca<>(m_sample, m_sample_time, get_position, get_name, gen));
+      genealogies.append(m_core.coalesce_to_mrca<>(m_sample, m_duration, get_position, get_name, gen));
       genealogies.append("\n\n");
     }
     genealogies.pop_back();
