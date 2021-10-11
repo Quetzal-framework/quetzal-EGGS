@@ -188,12 +188,12 @@ private:
     // carrying capacity:
     auto suitability = m_landscape["suitability"];
     int K_suit = m_vm["K_suit"].as<int>();
-    int K_min_ocean = m_vm["K_min"].as<int>();
-    int K_max_ocean = m_vm["K_max"].as<int>();
-    double p_K_ocean = m_vm["p_K"].as<double>();
-    int K_min_matrix = m_vm["K_min"].as<int>();
-    int K_max_matrix = m_vm["K_max"].as<int>();
-    double p_K_matrix = m_vm["p_K"].as<double>();
+    int K_min_ocean = m_vm["K_min_ocean"].as<int>();
+    int K_max_ocean = m_vm["K_max_ocean"].as<int>();
+    double p_K_ocean = m_vm["p_K_ocean"].as<double>();
+    int K_min_matrix = m_vm["K_min_matrix"].as<int>();
+    int K_max_matrix = m_vm["K_max_matrix"].as<int>();
+    double p_K_matrix = m_vm["p_K_matrix"].as<double>();
     auto K = [K_suit, K_min_ocean, K_max_ocean, p_K_ocean, K_min_matrix, K_max_matrix, p_K_matrix, &gen, suitability](coord_type const& x, time_type t)
     {
       if ( suitability(x,0) < 0.0) // NA: ocean cell
