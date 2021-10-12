@@ -170,3 +170,13 @@ If tests are failing and you want to output the reason of the failure, use inste
 ```
 CTEST_OUTPUT_ON_FAILURE=TRUE cmake --build .
 ```
+# Memory
+```
+git clone --recurse-submodules https://github.com/Becheler/quetzal-EGGS
+cd quetzal-EGGS
+mkdir RelDeb
+cd RelDeb
+cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
+make
+valgrind --tool=massif --xtree-memory=full ./src/EGG1 --config ../test/data/quetzal_EGG1.config --tips ../test/data/sample.csv --suitability ../test/data/suitability.tif --duration 50
+```

@@ -1,8 +1,9 @@
 //
 //  Copyright © 2020 Arnaud Becheler. All rights reserved.
 //
-#include "qegg1.h"
-#include <boost/program_options.hpp>
+#include "EGG2_options.h"
+#include "EGG2_context.h"
+#include "utils.h"
 
 namespace bpo = boost::program_options;
 
@@ -46,9 +47,9 @@ int main(int argc, char* argv[])
   if (vm.count("verbose"))
   {
     verbose = true;
-    PrintVariableMap(vm);
+    EGGS::utils::PrintVariableMap(vm);
   }
-  PrintVariableMap(vm);
+  EGGS::utils::PrintVariableMap(vm);
 
   std::random_device rd;
   std::mt19937 gen(rd());
