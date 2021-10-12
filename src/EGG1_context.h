@@ -279,7 +279,11 @@ private:
   void record_params_and_failure()
   {
     auto ID = m_database.insert_params_failure_and_get_rowid(m_vm);
+<<<<<<< HEAD
     std::cerr << ID << "\tFAILED" <<std::endl;
+=======
+    std::cout << ID << "\tFAILED" <<std::endl;
+>>>>>>> main
   }
 }; // end SimulationContext
 
