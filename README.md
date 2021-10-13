@@ -5,7 +5,6 @@
 [![Website becheler.github.io](https://img.shields.io/website-up-down-green-red/https/becheler.github.io.svg)](https://becheler.github.io/pages/quetzal_eggs/home)
 
 Quetzal-EGGS is a suit of geospatial programs for simulating neutral molecular diversity of populations.
-
 In their present version, the programs intend to:
 1. read parameters of in a georeferenced map and a configuration file
 2. simulate a demography history (forward in time)
