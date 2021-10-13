@@ -15,7 +15,9 @@ our project true strength relies in the ease with which new demographic assumpti
 can be integrated in a new simulator.
 
 - In the future, there will be (hopefully) several programs with different demographic models.
-- But right now, it's work in progress, so there is only one model available!
+- But right now, it's work in progress, so there is only two model available!
+
+![EGG2 in campos rupestres](https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_pulses.gif)
 
 If you like the idea of the project, star us on GitHub — it keeps me motivated!
 
