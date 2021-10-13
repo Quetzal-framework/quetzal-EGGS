@@ -19,7 +19,7 @@ can be integrated in a new simulator.
 
 EGG1 for oceanic dispersal |  EGG2 for oceanic dispersal and connectivity pulses
 :-------------------------:|:-------------------------:
-![](https://...Dark.png)  |  ![EGG2 in campos rupestres](https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_pulses.gif)
+![](https://...Dark.png)  |  <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_pulses.gif" width="250" height="250"/>
 
 If you like the idea of the project, star us on GitHub — it keeps me motivated!
 
