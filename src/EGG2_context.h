@@ -82,6 +82,7 @@ public:
   m_sample(build_sample()),
   m_core(build_simulation_core()),
   m_reproduction_expr(build_reproduction_function(gen)),
+  m_duration(m_vm["duration"].as<int>()),
   m_dispersal_kernel(build_dispersal_kernel())
   {
     if(verbose) show_reprojected_sample();
@@ -196,28 +197,20 @@ private:
     double p_K_matrix = m_vm["p_K_matrix"].as<double>();
     auto K = [K_suit, K_min_ocean, K_max_ocean, p_K_ocean, K_min_matrix, K_max_matrix, p_K_matrix, &gen, suitability](coord_type const& x, time_type t)
     {
-      // if ( suitability(x,0) < 0.0) // NA: ocean cell
-      // {
-      //   return std::bernoulli_distribution(p_K_ocean)(gen) ? K_max_ocean : K_min_ocean;
-      // }
-    //   if( suitability(x,0) == 0.0) // 0: matrix cell
-    //   {
-    //     double value = sin(static_cast<double>(t)*2.3/100.0);
-    //     auto rounded_value = static_cast<int>(value);
-    //     if(rounded_value < 0) rounded_value = 0;
-    //     return std::bernoulli_distribution(p_K_matrix)(gen) ? K_max_matrix*rounded_value : K_min_matrix*rounded_value;
-    //   }
-    //   else // non-zero, non-na: sky islands
-    //   {
-    //     return static_cast<int>(static_cast<double>(K_suit)*suitability(x,0));
-    //   }
-    if( suitability(x,0) <= 0.1)
-    {
-      //ocean cell:
-      return std::bernoulli_distribution(p_K_ocean)(gen) ? K_max_ocean : K_min_ocean;
-    }else{
-      return static_cast<int>(static_cast<double>(K_suit)*suitability(x,0));
-    }
+      if ( suitability(x,0) < 0.0) // NA: ocean cell
+      {
+        return std::bernoulli_distribution(p_K_ocean)(gen) ? K_max_ocean : K_min_ocean;
+      }
+      else if (suitability(x,0) == 0.0) // 0: matrix cell
+      {
+        double value = sin(static_cast<double>(t)*2.3/100.0);
+        if(value < 0.0) value = 0.0;
+        return std::bernoulli_distribution(p_K_matrix*value)(gen) ? static_cast<int>(static_cast<double>(K_max_matrix)*value) : static_cast<int>(static_cast<double>(K_min_matrix)*value);
+      }
+      else // non-zero, non-na: sky islands
+      {
+        return static_cast<int>(static_cast<double>(K_suit)*suitability(x,0));
+      }
     };
     // Retrieve population size reference to define a logistic growth process
     auto N = m_core.get_functor_N();
@@ -237,7 +230,7 @@ private:
     // std::function for knowing type to store as member
     std::function<double(coord_type)> friction = [suitability](coord_type const& x)
     {
-      if(suitability(x,0) <= 0.9) {return 0.01;} //ocean cell or matrix
+      if(suitability(x,0) <= 0.0) {return 0.01;} //ocean cell or matrix
       else return 1.0 - suitability(x, 0);
     };
     auto env_ref = std::cref(m_landscape);
