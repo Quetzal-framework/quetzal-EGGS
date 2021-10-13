@@ -81,6 +81,7 @@ public:
   m_sample(build_sample()),
   m_core(build_simulation_core()),
   m_reproduction_expr(build_reproduction_function(gen)),
+  m_duration(m_vm["duration"].as<int>()),
   m_dispersal_kernel(build_dispersal_kernel())
   {
     if(verbose) show_reprojected_sample();
@@ -249,8 +250,13 @@ private:
       using expr::use;
       auto core_ref = std::cref(m_core);
       auto N = m_core.get_functor_N();
-      auto space = [core_ref](time_type t){return core_ref.get().distribution_area(t);};
-      m_landscape.export_to_geotiff(N, 0, m_duration - 1, space, filename);
+      auto space_functor = [core_ref](time_type t){
+        auto v = core_ref.get().distribution_area(t);
+        return v;
+      };
+      unsigned int t_0 = 0;
+      unsigned int sampling_time = m_duration - 1;
+      m_landscape.export_to_geotiff(N, t_0, sampling_time, space_functor, filename);
     }
   }
 
