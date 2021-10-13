@@ -18,7 +18,7 @@ can be integrated in a new simulator.
 - But right now, it's work in progress, so there are only two model available!
 - You are interested, or need a new model? Please contact me!
 
-EGG1: stochastic oceanic drift | <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGGG1.gif" width="250" height="250"/>
+EGG1: stochastic oceanic drift | <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGG1.gif" width="250" height="250"/>
 :-------------------------:|:-------------------------:
 EGG2: pulses in continental matrix connectivity  |  <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGG2.gif" width="250" height="250"/>
 
