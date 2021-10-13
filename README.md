@@ -11,21 +11,17 @@ In their present version, the programs intend to:
 3. simulate coalescence trees for independent genetic markers (backward in time)
 4. record outputs in a SQL database.
 
-### How does it compare to existing resources?
-
 It compares to other available simulation resources ( like [SPLATCHE](http://splatche.com/), [simcoal2](http://cmpg.unibe.ch/software/simcoal2/), [egglib](http://mycor.nancy.inra.fr/egglib/index.html), [msprime](http://msprime.readthedocs.io/en/stable/index.html) or [necsim](https://pycoalescence.readthedocs.io/en/release/necsim/necsim_library.html)) by offering original demographic
 (forward in time) models.
 
 Being built from [Quetzal-CoalTL](https://github.com/Becheler/quetzal),
-our project true strength lies in the ease with which new demographic assumptions
+this project true strength lies in the ease with which new demographic assumptions
 (continental dispersal kernels, oceanic dispersal barriers, niche, density-dependence ...)
 can be integrated in a new simulator.
 
-- In the future, there will be (hopefully) several programs with different demographic models.
-- But right now, it's work in progress, so there are only two model available!
-- You are interested, or need a new model? Please contact me!
-- If you like the idea of the project, star us on GitHub — it keeps me motivated!
-- You can read more on the (to-be-updated) website: https://becheler.github.io/pages/quetzal_eggs/home
+- In the future, we expect to grow the list of existing programs with customized demographic models.
+- You are interested? Think of a new model? Want to give some feedback? Contact me! Please!
+- You think this is a cool project? Drop a star on GitHub — it keeps the motivation up!
 
 | EGG highlight | Simulation snapshot |
 | --------------| --------------------|
