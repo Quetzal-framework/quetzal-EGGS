@@ -19,11 +19,12 @@ this project true strength lies in the ease with which new demographic assumptio
 (continental dispersal kernels, oceanic dispersal barriers, niche, density-dependence ...)
 can be integrated in a new simulator.
 
-- In the future, we expect to grow the list of existing programs with customized demographic models.
-- You are interested? Think of a new model? Want to give some feedback? Contact me! Please!
-- You think this is a cool project? Drop a star on GitHub — it keeps the motivation up!
+- :crystal_ball: looking forward, we expect to grow the list of existing programs with customized demographic models.
+- :email: You are interested? Think of a new model? Want to give some feedback? Contact me! Please!
+- :star: You think this is a cool project? Drop a star on GitHub — it keeps the motivation up!
+- :bug: A bug? Oopsie daisy! Sorry about this, just open an issue or send me an email!
 
-| EGG highlight | Simulation snapshot |
+| Program | Demographic process       |
 | --------------| --------------------|
 | **EGG1** Stochastic oceanic dispersal (rafting events) | <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGG1.gif" width="250" height="250"/> |
 | **EGG2** Pulses in continental matrix connectivity |  <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGG2.gif" width="250" height="250"/> |
