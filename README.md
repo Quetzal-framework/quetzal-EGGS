@@ -5,7 +5,7 @@
 
 Quetzal-EGGS is a suit of spatial coalescence simulation programs for neutral populations.
 In their present version, the programs intend to read spatial information about
-model parameters in a map, simulate coalescence trees for independent genetic markers and
+model parameters in a map, simulate a forward time demography, then simulate coalescence trees for independent genetic markers and
 write outputs in a SQL database.
 
 It compares to other available simulation resources ( like [SPLATCHE](http://splatche.com/), [simcoal2](http://cmpg.unibe.ch/software/simcoal2/), [egglib](http://mycor.nancy.inra.fr/egglib/index.html), [msprime](http://msprime.readthedocs.io/en/stable/index.html) or [necsim](https://pycoalescence.readthedocs.io/en/release/necsim/necsim_library.html)) by offering original demographic
@@ -15,11 +15,12 @@ our project true strength relies in the ease with which new demographic assumpti
 can be integrated in a new simulator.
 
 - In the future, there will be (hopefully) several programs with different demographic models.
-- But right now, it's work in progress, so there is only two model available!
+- But right now, it's work in progress, so there are only two model available!
+- You are interested, or need a new model? Please contact me!
 
-EGG1 for oceanic dispersal |  EGG2 for oceanic dispersal and connectivity pulses
+EGG1: stochastic oceanic drift | <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGGG1.gif" width="250" height="250"/>
 :-------------------------:|:-------------------------:
-![](https://...Dark.png)  |  <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_pulses.gif" width="250" height="250"/>
+EGG2: pulses in continental matrix connectivity  |  <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGG2.gif" width="250" height="250"/>
 
 If you like the idea of the project, star us on GitHub — it keeps me motivated!
 
