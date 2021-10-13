@@ -205,7 +205,7 @@ private:
       {
         double value = sin(static_cast<double>(t)*2.3/100.0);
         if(value < 0.0) value = 0.0;
-        return std::bernoulli_distribution(p_K_matrix)(gen) ? static_cast<int>(static_cast<double>(K_max_matrix)*value) : static_cast<int>(static_cast<double>(K_min_matrix)*value);
+        return std::bernoulli_distribution(p_K_matrix*value)(gen) ? static_cast<int>(static_cast<double>(K_max_matrix)*value) : static_cast<int>(static_cast<double>(K_min_matrix)*value);
       }
       else // non-zero, non-na: sky islands
       {
