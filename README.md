@@ -20,8 +20,8 @@ can be integrated in a new simulator.
 
 | EGG highlight | Simulation snapshot |
 | --------------| --------------------|
-| *EGG1* Stochastic oceanic drift| <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGG1.gif" width="250" height="250"/> |
-| *EGG2* Pulses in continental matrix connectivity  |  <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGG2.gif" width="250" height="250"/> |
+| **EGG1** Stochastic oceanic dispersal (rafting events) | <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGG1.gif" width="250" height="250"/> |
+| **EGG2** Pulses in continental matrix connectivity |  <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGG2.gif" width="250" height="250"/> |
 
 If you like the idea of the project, star us on GitHub — it keeps me motivated!
 
