@@ -9,7 +9,7 @@ In their present version, the programs intend to:
 1. read parameters of in a georeferenced map and a configuration file
 2. simulate a demography history (forward in time)
 3. simulate coalescence trees for independent genetic markers (backward in time)
-4. record outputs in a SQL database.
+4. record outputs in a SQL database so you can access them later for inference using [Quetzal-CRUMBS](https://github.com/Becheler/quetzal-CRUMBS)
 
 It compares to other available simulation resources ( like [SPLATCHE](http://splatche.com/), [simcoal2](http://cmpg.unibe.ch/software/simcoal2/), [egglib](http://mycor.nancy.inra.fr/egglib/index.html), [msprime](http://msprime.readthedocs.io/en/stable/index.html) or [necsim](https://pycoalescence.readthedocs.io/en/release/necsim/necsim_library.html)) by offering original demographic
 (forward in time) models.
