@@ -6,7 +6,7 @@
 
 Quetzal-EGGS is a suit of geospatial programs for simulating neutral molecular diversity of populations.
 In their present version, the programs intend to:
-1. read parameters of in a georeferenced map and a configuration file
+1. read generic parameters in a configuration file and localized parameters in a georeferenced map
 2. simulate a demography history (forward in time)
 3. simulate coalescence trees for independent genetic markers (backward in time)
 4. record outputs in a SQL database so you can access them later for inference using [Quetzal-CRUMBS](https://github.com/Becheler/quetzal-CRUMBS)
