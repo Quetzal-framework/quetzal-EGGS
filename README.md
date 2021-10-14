@@ -20,9 +20,9 @@ this project true strength lies in the ease with which new demographic assumptio
 can be integrated in a new simulator.
 
 - :crystal_ball: looking forward, we expect to grow the list of existing programs with customized demographic models.
-- :email: You are interested? Think of a new model? Want to give some feedback? Don't be shy, [contact me!](https://github.com/Becheler)
+- :email: You are interested? Think of a new model? Want to give some feedback or contribute? Don't be shy, [contact me!](https://lsa.umich.edu/eeb/people/postdoctoral-fellows/arnaud-becheler.html)
 - :star: You think this is a cool project? Drop a star on GitHub :point_up:
-- :bug: A bug? Oopsie daisy! I'll fix it asap if you [email me](https://github.com/Becheler) or open an issue :point_up:
+- :bug: A bug? Oopsie daisy! I'll fix it asap if you [email me](https://lsa.umich.edu/eeb/people/postdoctoral-fellows/arnaud-becheler.html) or open an issue :point_up:
 
 | Program | Demographic process       |
 | --------------| --------------------|
