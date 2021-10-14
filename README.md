@@ -1,4 +1,4 @@
-# quetzal-EGGS <img align="right" width="200" src="https://github.com/Becheler/Becheler.github.io/blob/media/quetzal_eggs.png">
+# quetzal-EGGS <img align="right" width="200" src="https://github.com/Becheler/quetzal-EGGS/blob/media/quetzal_eggs.png">
 
 [![Becheler](https://circleci.com/gh/Becheler/quetzal-EGGS.svg?style=shield)](https://app.circleci.com/pipelines/github/Becheler)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -26,10 +26,10 @@ can be integrated in a new simulator.
 
 | Program | Demographic process       |
 | --------------| --------------------|
-| **EGG1** Stochastic oceanic dispersal (rafting events) | <img src="https://github.com/Becheler/Becheler.github.io/blob/media/animation_EGG1.gif" width="250" height="250"/> |
-| **EGG2** Pulses in continental matrix connectivity |  <img src="https://github.com/Becheler/Becheler.github.io/blob/media/animation_EGG2.gif" width="250" height="250"/> |
+| **EGG1** Stochastic oceanic dispersal (rafting events) | <img src="https://github.com/Becheler/quetzal-EGGS/blob/media/animation_EGG1.gif" width="250" height="250"/> |
+| **EGG2** Pulses in continental matrix connectivity |  <img src="https://github.com/Becheler/quetzal-EGGS/blob/media/animation_EGG2.gif" width="250" height="250"/> |
 
-## Description <img align="right" width="400" src="https://github.com/Becheler/Becheler.github.io/blob/media/quetzal-EGGS/readme_scheme.svg">
+## Description <img align="right" width="400" src="https://github.com/Becheler/quetzal-EGGS/blob/media/quetzal-EGGS/readme_scheme.svg">
 
 A demographic history is simulated forward in time in a heterogeneous landscape
 (the landscape patterns are given to the program options as a geographic raster layer).
