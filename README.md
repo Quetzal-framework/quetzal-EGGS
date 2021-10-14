@@ -29,7 +29,7 @@ can be integrated in a new simulator.
 | **EGG1** Stochastic oceanic dispersal (rafting events) | <img src="https://github.com/Becheler/quetzal-EGGS/blob/media/animation_EGG1.gif" width="250" height="250"/> |
 | **EGG2** Pulses in continental matrix connectivity |  <img src="https://github.com/Becheler/quetzal-EGGS/blob/media/animation_EGG2.gif" width="250" height="250"/> |
 
-## Description <img align="right" width="400" src="https://github.com/Becheler/quetzal-EGGS/blob/media/quetzal-EGGS/readme_scheme.svg">
+## Description <img align="right" width="400" src="https://github.com/Becheler/quetzal-EGGS/blob/media/readme_scheme.svg">
 
 A demographic history is simulated forward in time in a heterogeneous landscape
 (the landscape patterns are given to the program options as a geographic raster layer).
