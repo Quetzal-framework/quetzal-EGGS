@@ -2,30 +2,32 @@
 
 [![Becheler](https://circleci.com/gh/Becheler/quetzal-EGGS.svg?style=shield)](https://app.circleci.com/pipelines/github/Becheler)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Website becheler.github.io](https://img.shields.io/website-up-down-green-red/https/becheler.github.io.svg)](https://becheler.github.io/pages/quetzal_eggs/home)
 
-Quetzal-EGGS is a suit of spatial coalescence simulation programs for neutral populations.
-In their present version, the programs intend to read spatial information about
-model parameters in a map, simulate a forward time demography, then simulate coalescence trees for independent genetic markers and
-write outputs in a SQL database.
+Quetzal-EGGS is a suit of geospatial programs for simulating neutral molecular diversity of populations.
+In their present version, the programs intend to:
+1. read parameters of in a georeferenced map and a configuration file
+2. simulate a demography history (forward in time)
+3. simulate coalescence trees for independent genetic markers (backward in time)
+4. record outputs in a SQL database so you can access them later for inference using [Quetzal-CRUMBS](https://github.com/Becheler/quetzal-CRUMBS)
 
 It compares to other available simulation resources ( like [SPLATCHE](http://splatche.com/), [simcoal2](http://cmpg.unibe.ch/software/simcoal2/), [egglib](http://mycor.nancy.inra.fr/egglib/index.html), [msprime](http://msprime.readthedocs.io/en/stable/index.html) or [necsim](https://pycoalescence.readthedocs.io/en/release/necsim/necsim_library.html)) by offering original demographic
-(forward in time) models. Being built from [Quetzal-CoalTL](https://github.com/Becheler/quetzal),
-our project true strength relies in the ease with which new demographic assumptions
+(forward in time) models.
+
+Being built from [Quetzal-CoalTL](https://github.com/Becheler/quetzal),
+this project true strength lies in the ease with which new demographic assumptions
 (continental dispersal kernels, oceanic dispersal barriers, niche, density-dependence ...)
 can be integrated in a new simulator.
 
-- In the future, there will be (hopefully) several programs with different demographic models.
-- But right now, it's work in progress, so there are only two model available!
-- You are interested, or need a new model? Please contact me!
+- :crystal_ball: looking forward, we expect to grow the list of existing programs with customized demographic models.
+- :email: You are interested? Think of a new model? Want to give some feedback? Don't be shy, [contact me!](https://github.com/Becheler)
+- :star: You think this is a cool project? Drop a star on GitHub :point_up:
+- :bug: A bug? Oopsie daisy! I'll fix it asap if you [email me](https://github.com/Becheler) or open an issue :point_up:
 
-| EGG highlight | Simulation snapshot |
+| Program | Demographic process       |
 | --------------| --------------------|
 | **EGG1** Stochastic oceanic dispersal (rafting events) | <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGG1.gif" width="250" height="250"/> |
 | **EGG2** Pulses in continental matrix connectivity |  <img src="https://github.com/Becheler/Becheler.github.io/blob/master/movies/animation_EGG2.gif" width="250" height="250"/> |
-
-If you like the idea of the project, star us on GitHub — it keeps me motivated!
-
-You can read more on the (to-be-updated) website: https://becheler.github.io/pages/quetzal_eggs/home
 
 ## Description <img align="right" width="400" src="https://github.com/Becheler/Becheler.github.io/blob/master/draw/quetzal-EGGS/readme_scheme.svg">
 
