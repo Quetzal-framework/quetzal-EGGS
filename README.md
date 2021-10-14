@@ -20,9 +20,9 @@ this project true strength lies in the ease with which new demographic assumptio
 can be integrated in a new simulator.
 
 - :crystal_ball: looking forward, we expect to grow the list of existing programs with customized demographic models.
-- :email: You are interested? Think of a new model? Want to give some feedback? [Contact me!](https://github.com/Becheler) Please!
+- :email: You are interested? Think of a new model? Want to give some feedback? Don't be shy, [contact me!](https://github.com/Becheler)
 - :star: You think this is a cool project? Drop a star on GitHub :point_up:
-- :bug: A bug? Oopsie daisy! Sorry about this, just open an issue :point_up: or [send me an email](https://github.com/Becheler)!
+- :bug: A bug? Oopsie daisy! I'll fix it asap if you [email me](https://github.com/Becheler) or open an issue :point_up:
 
 | Program | Demographic process       |
 | --------------| --------------------|
