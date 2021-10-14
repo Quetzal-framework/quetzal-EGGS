@@ -20,8 +20,9 @@ this project true strength lies in the ease with which new demographic assumptio
 can be integrated in a new simulator.
 
 - :crystal_ball: looking forward, we expect to grow the list of existing programs with customized demographic models.
-- :email: You are interested? Think of a new model? Want to give some feedback? Contact me! Please!
-- :star: You think this is a cool project? Drop a star on GitHub — it keeps the motivation up!
+- :email: You are interested? Think of a new model? Want to give some feedback? [Contact me!](https://github.com/Becheler) Please!
+- <!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/ntkme/github-buttons" data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a> You think this is a cool project? Drop a star on GitHub — it keeps the motivation up!
 - :bug: A bug? Oopsie daisy! Sorry about this, just open an issue or send me an email!
 
 | Program | Demographic process       |
