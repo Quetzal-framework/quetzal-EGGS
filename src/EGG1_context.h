@@ -193,11 +193,12 @@ private:
     double p_K = m_vm["p_K"].as<double>();
     auto K = [K_suit, K_min, K_max, p_K, &gen, suitability](coord_type const& x, time_type)
     {
-      if( suitability(x,0) <= 0.1)
+      if(suitability(x,0) < 0.0) // NA ocean cell:
       {
-        //ocean cell:
         return std::bernoulli_distribution(p_K)(gen) ? K_max : K_min;
-      }else{
+      }
+      else // zero and non-zero continental cells
+      {
         return static_cast<int>(static_cast<double>(K_suit)*suitability(x,0));
       }
     };
@@ -219,8 +220,18 @@ private:
     // std::function for knowing type to store as member
     std::function<double(coord_type)> friction = [suitability](coord_type const& x)
     {
-      if(suitability(x,0) <= 0.5) {return 0.99;} //ocean cell
-      else return 1.0 - suitability(x, 0);
+      if(suitability(x,0) < 0.0 ) // NA ocean cells
+      {
+        return 0.0, // movement uniformely random across ocean cells
+      }
+      else if( suitability(x,0) == 0.0) // zero continental cells
+      {
+        return 1.00; // nobody wants to move there. Like Oregon.
+      }
+      else // non-zero, non-NA continental cells
+      {
+        return 1.0 - suitability(x, 0);
+      }
     };
     auto env_ref = std::cref(m_landscape);
     // std::function for knowing type to store as member
