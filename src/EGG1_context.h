@@ -222,7 +222,7 @@ private:
     {
       if(suitability(x,0) < 0.0 ) // NA ocean cells
       {
-        return 0.0, // movement uniformely random across ocean cells
+        return 0.0; // movement uniformely random across ocean cells
       }
       else if( suitability(x,0) == 0.0) // zero continental cells
       {
