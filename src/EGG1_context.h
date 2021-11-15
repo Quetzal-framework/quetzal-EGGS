@@ -51,7 +51,7 @@ private:
   using sample_type = std::vector<EGGS::utils::GeneCopy>;
   using dispersal_policy = quetzal::demography::dispersal_policy::mass_based;
   using coalescence_policy = quetzal::coalescence::newick_with_distance_to_parent_and_leaf_name<coord_type, time_type>;
-  using memory_policy = quetzal::memory::on_demand;
+  using memory_policy = quetzal::memory::on_disk;
   using core_type = quetzal::ForwardBackwardSpatiallyExplicit<coord_type, dispersal_policy, coalescence_policy, memory_policy>;
   using options_type = bpo::variables_map;
   using dispersal_type = dispersal_policy::neighboring_migration

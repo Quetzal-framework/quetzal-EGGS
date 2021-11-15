@@ -18,7 +18,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Boost 1.61 REQUIRED COMPONENTS program_options)
+find_package(Boost 1.61 REQUIRED COMPONENTS program_options serialization)
 
 find_package(SQLite3 REQUIRED)
 if (SQLite3_FOUND)
